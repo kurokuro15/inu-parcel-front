@@ -16,7 +16,10 @@ export default class Ui {
 
     const header = createElement('header')
     header.appendChild(headerText)
+    const hr = createElement('hr')
+
     container.appendChild(header)
+    container.appendChild(hr)
   }
 
   /**
@@ -26,8 +29,10 @@ export default class Ui {
     const main = createElement('main')
     main.classList.add('my-3', 'text-center')
     container.appendChild(main)
+
+    // Esto verifica que no exista ya el formulario.
     if (!document.querySelector('form.whatsend')) {
-      this.whatSend(main)
+      this.shippingDetail(main)
     }
   }
 
@@ -203,7 +208,55 @@ export default class Ui {
    *  La tarifa incluye: Precio del envío, tiempo estimado, distancia recorrida
    *  Se permite la opción de no asegurar
    */
-  shippingDetail (main) {}
+  shippingDetail (main) {
+    this.clearHtml(main)
+    const presupuesto = { raw: 85, tax: 15, amount: 100, origin: 'A', destiny: 'B', distance: 100, time: 1, distanceUnit: 'kilómetros', timeUnit: 'horas' }
+    const { raw, tax, amount, origin, destiny, distance, time, distanceUnit, timeUnit } = presupuesto
+    const article = createElement('article')
+    article.classList.add('row', 'justify-content-center')
+    article.innerHTML = `
+    <div class="col-md-6">
+      <div class="card">
+        <h2 class="card-header border-success">Tarifa propuesta</h2>
+          <table class="table table-borderless table-sm m-0 p-0">
+            <tbody>
+              <tr>
+                <th>Precio neto:</th>
+                <td>${raw}U$D</td>
+              </tr>
+              <tr>
+                <th>IVA:</th>
+                <td>${tax}U$D</td>
+              </tr>
+              <tr>
+                <th>Total:</th>
+                <td class="fw-bold">${amount}U$D</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class='border-top'>
+            <section class="card-group justify-content-around pt-2">
+              <p>${origin}</p>
+              <div>
+                <span class="material-icons">double_arrow</span>
+                <span class="material-icons-outlined">local_shipping</span>
+                <span class="material-icons">double_arrow</span>
+              </div>
+              <p>${destiny}</p>
+            </section>
+            <section class="card-group justify-content-center">
+              <p>${distance} ${distanceUnit}</p>
+            </section>
+            <section class="card-group justify-content-center">
+            <span class="material-icons-outlined">watch_later</span>
+            <p>${time} ${timeUnit}</p>
+            </section>
+          </div>
+      </div>
+    </div>
+    `
+    main.appendChild(article)
+  }
 
   /**
    * Limpia la vista para no crear elementos html innecesarios
