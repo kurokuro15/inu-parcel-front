@@ -1,5 +1,5 @@
-import { container, createElement } from './GlobalSelectors.js'
-import config from './Config.js'
+import { container, createElement } from '../GlobalSelectors.js'
+import config from '../Config.js'
 
 export default class Ui {
   constructor () {
@@ -32,7 +32,7 @@ export default class Ui {
 
     // Esto verifica que no exista ya el formulario.
     if (!document.querySelector('form.whatsend')) {
-      this.shippingDetail(main)
+      this.whatSend(main)
     }
   }
 
@@ -210,7 +210,7 @@ export default class Ui {
    */
   shippingDetail (main) {
     this.clearHtml(main)
-    const presupuesto = { raw: 85, tax: 15, amount: 100, origin: 'A', destiny: 'B', distance: 100, time: 1, distanceUnit: 'kilómetros', timeUnit: 'horas' }
+    const presupuesto = { raw: 85, tax: 15, amount: 100, origin: 'A', destiny: 'B', distance: 100, time: 1, distanceUnit: 'kilómetros', timeUnit: 'hora' }
     const { raw, tax, amount, origin, destiny, distance, time, distanceUnit, timeUnit } = presupuesto
     const article = createElement('article')
     article.classList.add('row', 'justify-content-center')
