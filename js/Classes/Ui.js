@@ -1,6 +1,6 @@
-import { container, createElement } from '../GlobalSelectors.js'
+import { container, createElement, parcelData, selecter, parcelObj, validationWhatSend } from '../GlobalSelectors.js'
 import config from '../Config.js'
-
+import Parcel from './Parcel.js'
 export default class Ui {
   constructor () {
     this.config = config
@@ -22,31 +22,55 @@ export default class Ui {
     container.appendChild(hr)
   }
 
+  printAlert (type, messange) {
+    // Crea el div
+    const divMessange = document.createElement('div')
+    divMessange.classList.add('text-center', 'alert', 'd-block', 'col-12')
+
+    // Si es de tipo error agrega una clase
+    if (type === 'error') {
+      divMessange.classList.add('alert-danger')
+    } else {
+      divMessange.classList.add('alert-success')
+    }
+
+    // Messange de error
+    divMessange.textContent = messange
+
+    // Insertar en el DOM
+    container.insertBefore(divMessange, document.querySelector('main'))
+
+    // Quitar el alert despues de 3 segundos
+    setTimeout(() => {
+      divMessange.remove()
+    }, 3000)
+  }
+
   /**
    * Crea el cuerpo de la app y presenta el primer paso: ¿Qué envías?
    */
   main () {
-    const main = createElement('main')
-    main.classList.add('my-3', 'text-center')
-    container.appendChild(main)
+    this.mainElement = createElement('main')
+    this.mainElement.classList.add('my-3', 'text-center')
+    container.appendChild(this.mainElement)
 
     // Esto verifica que no exista ya el formulario.
     if (!document.querySelector('form.whatsend')) {
-      this.whatSend(main)
+      this.whatSend()
     }
   }
 
   /**
    * Crea la vista de ¿Qué envías? pidiendo el tipo, el valor, dimensiones y peso del producto
    */
-  whatSend (main) {
+  whatSend () {
     // Limpiamos por si las moscas
-    this.clearHtml(main)
+    this.clearHtml(this.mainElement)
 
     const { productsType } = this.config
 
     // Creamos el título de la vista.
-    this._subtitleCreate(main, '¿Qué envías?')
+    this._subtitleCreate(this.mainElement, '¿Qué envías?')
 
     // Creamos el formulario que contendrá la vista.
     const form = createElement('form')
@@ -64,13 +88,14 @@ export default class Ui {
     <div class="col-md-6">
       <div class="input-group input-group-lg">
       <span class="input-group-text">Tipo</span>
-      <select id='type' class="form-select">
+      <select name="type" id='type' class="form-select">
       <option selected disabled>Tipo de encomienda</option>
       ${options}
       </select>
       </div>
     </div>
     `
+
     // Un poco de lo mismo but, con el input que tendrá el valor de la encomienda
     const valueInput = `
     <div class="col-md-6">
@@ -87,7 +112,7 @@ export default class Ui {
       <div class="input-group input-group-lg">
         <span class="input-group-text">Dimensión (LxWxH)</span>
         <input
-          id="lenth"
+          id="length"
           class="form-control text-center"
           type="text"
           placeholder="0.00"
@@ -104,7 +129,7 @@ export default class Ui {
           type="text"
           placeholder="0.00"
         />
-        <span class="input-group-text">Mts</span>
+        <span class="input-group-text">CM</span>
       </div>
     </div>
     `
@@ -120,21 +145,27 @@ export default class Ui {
     `
     // Introducimos todo el texto como html al formulario y el formulario al marco principal
     form.innerHTML = `${select}${valueInput}${dimensionInput}${weight}`
-    main.appendChild(form)
+    this.mainElement.appendChild(form)
 
-    // esto se supone será para darle cambio a la siguiente vista, una vez se valide al información :v
+    // Acá le metemos esa función, que ahorita reemplazaré por la de validación.. O la añado global? :v
+    // acá falta la validación. Se me ocurre validar el objeto en lugar de los inputs
+    selecter('#type').addEventListener('change', parcelData)
+    selecter('#value').addEventListener('change', parcelData)
+
+    selecter('#length').addEventListener('change', parcelData)
+    selecter('#width').addEventListener('change', parcelData)
+    selecter('#high').addEventListener('change', parcelData)
+    selecter('#weight').addEventListener('change', parcelData)
     form.addEventListener('change', e => {
-      e.preventDefault()
-      console.log('está cambiando algo dentro del form')
-      console.log(e.target.value)
-      this.fromWhere(main)
+      validationWhatSend(e)
+      this.printAlert()
     })
   }
 
   /**
    * Crea la vista de ¿desde donde envías? pidiendo la dirección emisora del paquete
    */
-  fromWhere (main) {
+  whereSend (main) {
     this.clearHtml(main)
 
     // Creamos el título de la vista.
@@ -153,24 +184,25 @@ export default class Ui {
     `
     // Generamos el select de direcciones para 'from'
     const address = this._addressSelector()
-    address.id = 'from'
+    address.id = 'receivingAddress'
+    address.addEventListener('change', e => { parcelData(e); this.fromWhere(main) })
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
     main.appendChild(form)
 
     // Esto no más es para ir cambiando rápido entre vistas por ahora :v
-    form.addEventListener('change', e => {
-      e.preventDefault()
-      console.log('está cambiando algo dentro del form')
-      console.log(e.target.value)
-      this.toWhere(main)
-    })
+    // form.addEventListener('change', e => {
+    //   e.preventDefault()
+    //   console.log('está cambiando algo dentro del form')
+    //   console.log(e.target.value)
+
+    // })
   }
 
   /**
    * Crea la vista de ¿hacia donde envías? pidiendo la dirección receptora del paquete
    */
-  toWhere (main) {
+  fromWhere (main) {
     this.clearHtml(main)
 
     // Creamos el título de la vista.
@@ -189,18 +221,19 @@ export default class Ui {
     `
     // Generamos el select de direcciones para 'to'
     const address = this._addressSelector()
-    address.id = 'to'
+    address.id = 'senderAddress'
+    address.addEventListener('change', (e) => { parcelData(e); this.shippingDetail(main) })
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
     main.appendChild(form)
 
     // Esto no más es para ir cambiando rápido entre vistas por ahora :v
-    form.addEventListener('change', e => {
-      e.preventDefault()
-      console.log('está cambiando algo dentro del form')
-      console.log(e.target.value)
-      this.shippingDetail(main)
-    })
+    // form.addEventListener('change', e => {
+    //   e.preventDefault()
+    //   console.log('está cambiando algo dentro del form')
+    //   console.log(e.target.value)
+    //   this.shippingDetail(main)
+    // })
   }
 
   /**
@@ -210,7 +243,9 @@ export default class Ui {
    */
   shippingDetail (main) {
     this.clearHtml(main)
-    const presupuesto = { raw: 85, tax: 15, amount: 100, origin: 'A', destiny: 'B', distance: 100, time: 1, distanceUnit: 'kilómetros', timeUnit: 'hora' }
+    const parcel = new Parcel(parcelObj)
+    const presupuesto = parcel.getParcel()
+    console.log(presupuesto)
     const { raw, tax, amount, origin, destiny, distance, time, distanceUnit, timeUnit } = presupuesto
     const article = createElement('article')
     article.classList.add('row', 'justify-content-center')
