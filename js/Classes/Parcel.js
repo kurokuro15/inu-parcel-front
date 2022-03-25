@@ -1,14 +1,15 @@
 import config from '../Config.js'
 export default class Parcel {
-  constructor ({ value, dimensions, weight, type, senderAddress, receivingAddress }) {
+  constructor ({ value, length, width, high, weight, type, senderAddress, receivingAddress }) {
     this.value = value
-    this.dimensions = dimensions
+    this.dimensions = { length, width, high }
     this.weight = weight
     this.type = type
     this.config = config
-    ;[this.senderAddress] = this.config.addresses.filter(ad => ad.id === senderAddress)
+    // Tengo acá un problema. Debo parsear el ID de las direcciones.. Creo que Con Number se resuelve :V.
+    ;[this.senderAddress] = this.config.addresses.filter(ad => ad.id === Number(senderAddress))
     ;[this.receivingAddress] = this.config.addresses.filter(
-      ad => ad.id === receivingAddress
+      ad => ad.id === Number(receivingAddress)
     )
     this.distance = 0
   }
@@ -66,6 +67,7 @@ export default class Parcel {
 
   // Calcularemos el tiempo que tardará en llegar el paquete del origen al destino
   calTime () {
+    // Tengo un buggisto acá que arreglar :'u
     const { time: T } = this.config.units
     const TO_MINUTES = 60
     // Para calcular el tiempo se toma la distancia y se divide por la constante de velocidad. (para efectos prácticos y no fumarnos un porro del tamaño de la torre ifel)
