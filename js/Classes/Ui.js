@@ -194,14 +194,6 @@ export default class Ui {
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
     this.mainElement.appendChild(form)
-
-    // Esto no más es para ir cambiando rápido entre vistas por ahora :v
-    // form.addEventListener('change', e => {
-    //   e.preventDefault()
-    //   console.log('está cambiando algo dentro del form')
-    //   console.log(e.target.value)
-
-    // })
   }
 
   /**
@@ -231,14 +223,6 @@ export default class Ui {
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
     this.mainElement.appendChild(form)
-
-    // Esto no más es para ir cambiando rápido entre vistas por ahora :v
-    // form.addEventListener('change', e => {
-    //   e.preventDefault()
-    //   console.log('está cambiando algo dentro del form')
-    //   console.log(e.target.value)
-    //   this.shippingDetail(this.mainElement)
-    // })
   }
 
   /**
@@ -248,10 +232,14 @@ export default class Ui {
    */
   shippingDetail () {
     this.clearHtml(this.mainElement)
+    // Traemos la clase Parcel y hacemos una instancia.
     const parcel = new Parcel(parcelObj)
+
+    // llamamos al método que nos devuelve los cálculos :D
     const presupuesto = parcel.getParcel()
-    console.log(presupuesto)
+
     const { raw, tax, amount, origin, destiny, distance, time, distanceUnit, timeUnit } = presupuesto
+
     const article = createElement('article')
     article.classList.add('row', 'justify-content-center')
     article.innerHTML = `
