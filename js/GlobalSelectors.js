@@ -1,4 +1,3 @@
-
 // Acá estarán ubicados selectores para usar globalmente y funciones que requieren del dom
 
 // Selectors
@@ -25,25 +24,21 @@ export function parcelData (e) {
 
 export function validationWhatSend (e, callback) {
   const montReg = /\d+\.?\d*/
-  const { value, length, width, high, weight, type } =
-    parcelObj
-  if (
-    !value ||
-    !length ||
-    !width ||
-    !high ||
-    !weight ||
-    !type
+  const { value, length, width, high, weight, type } = parcelObj
+  if (!type) {
+    return 'Seleccione un tipo de encomienda'
+  } else if (!value || isNaN(value) || !montReg.test(value)) {
+    return 'Ingrese un monto válido.'
+  } else if (
+    isNaN(length) ||
+    isNaN(width) ||
+    isNaN(high) ||
+    !montReg.test(length) ||
+    !montReg.test(width) ||
+    !montReg.test(high)
   ) {
-    return 'Todos los campos son requeridos.'
-  }
-  if (isNaN(value) || !montReg.test(value)) {
-    return 'Ingrese un monto válido'
-  }
-  if ((isNaN(length) || isNaN(width) || isNaN(high)) || (!montReg.test(length) || !montReg.test(width) || !montReg.test(high))) {
     return 'Ingrese una medida válida'
-  }
-  if (isNaN(weight) || !montReg.test(weight)) {
+  } else if (isNaN(weight) || !montReg.test(weight)) {
     return 'Ingrese un peso válido'
   }
   callback()
