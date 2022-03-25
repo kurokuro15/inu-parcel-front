@@ -19,7 +19,6 @@ export const parcelObj = {
 
 export function parcelData (e) {
   parcelObj[e.target.id] = e.target.value
-  console.log(parcelObj)
 }
 
 let count = 0
@@ -38,16 +37,17 @@ export function validationWhatSend (e) {
     high: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
     weight: (isNaN(value) || !montReg.test(value)) ? 'Ingrese un peso válido' : ''
   }
-  console.log(count)
+
   if (count === 6) {
     count = 0
     let emply = 0
     for (const prop in parcelObj) {
-      console.log(parcelObj[prop], emply)
       emply += parcelObj[prop] ? 0 : 1
     }
     if (emply <= 2) {
       return 'success'
+    } else {
+      return 'Todos los campos son válidos. Se valida cada 6 cambios.'
     }
   }
   return valObj[target.id]
