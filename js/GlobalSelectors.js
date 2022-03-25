@@ -21,34 +21,35 @@ export function parcelData (e) {
   parcelObj[e.target.id] = e.target.value
 }
 
-let count = 0
-
 export function validationWhatSend (e) {
-  count++
+  e.preventDefault()
   const montReg = /\d+\.?\d*/
-  const { target } = e
-  const value = parcelObj[target.id]
-
-  const valObj = {
-    type: (!value) ? 'Seleccione un tipo de encomienda' : '',
-    value: (!value || isNaN(value) || !montReg.test(value)) ? 'Ingrese un monto válido.' : '',
-    length: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
-    width: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
-    high: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
-    weight: (isNaN(value) || !montReg.test(value)) ? 'Ingrese un peso válido' : ''
+  const { value, length, width, high, weight, type } =
+    parcelObj
+  if (
+    !value ||
+    !length ||
+    !width ||
+    !high ||
+    !weight ||
+    !type
+  ) {
+    return 'Todos los campos son requeridos.'
   }
-
-  if (count === 6) {
-    count = 0
-    let emply = 0
-    for (const prop in parcelObj) {
-      emply += parcelObj[prop] ? 0 : 1
-    }
-    if (emply <= 2) {
-      return 'success'
-    } else {
-      return 'Todos los campos son válidos. Se valida cada 6 cambios.'
-    }
+  if (isNaN(value) || !montReg.test(value)) {
+    return 'Ingrese un monto válido'
   }
-  return valObj[target.id]
+  if ((isNaN(length) || isNaN(width) || isNaN(high)) || (!montReg.test(length) || !montReg.test(width) || !montReg.test(high))) {
+    return 'Ingrese una medida válida'
+  }
+  if (isNaN(weight) || !montReg.test(weight)) {
+    return 'Ingrese un peso válido'
+  }
+  return 'success'
+}
+
+export function reset () {
+  for (const key in parcelObj) {
+    parcelObj[key] = 0
+  }
 }

@@ -1,4 +1,4 @@
-import { container, createElement, parcelData, selecter, parcelObj, validationWhatSend } from '../GlobalSelectors.js'
+import { container, createElement, parcelData, selecter, parcelObj, validationWhatSend, reset } from '../GlobalSelectors.js'
 import config from '../Config.js'
 import Parcel from './Parcel.js'
 export default class Ui {
@@ -23,6 +23,11 @@ export default class Ui {
   }
 
   printAlert (type, messange) {
+    // XD ya el time y la cabeza no me dan para refactorizar estas cosas :v Por ahora
+    if (selecter('div.alert')) {
+      selecter('div.alert').remove()
+    }
+
     // Crea el div
     const divMessange = document.createElement('div')
     divMessange.classList.add('text-center', 'alert', 'd-block', 'col-12')
@@ -74,7 +79,7 @@ export default class Ui {
 
     // Creamos el formulario que contendrá la vista.
     const form = createElement('form')
-    form.classList = 'row align-items-center g-3 m-2 pb-3'
+    form.classList = 'row align-items-center justify-content-center g-3 m-2 pb-3'
 
     // Preparamos las opciones de encomiendas
     const options = productsType
@@ -143,8 +148,11 @@ export default class Ui {
       </div>
     </div>
     `
+    const button = `
+    <button class="btn btn-primary col-2 " type ="submit">siguiente</button>
+    `
     // Introducimos todo el texto como html al formulario y el formulario al marco principal
-    form.innerHTML = `${select}${valueInput}${dimensionInput}${weight}`
+    form.innerHTML = `${select}${valueInput}${dimensionInput}${weight}${button}`
     this.mainElement.appendChild(form)
 
     // Acá le metemos esa función, que ahorita reemplazaré por la de validación.. O la añado global? :v
@@ -156,7 +164,7 @@ export default class Ui {
     selecter('#width').addEventListener('change', parcelData)
     selecter('#high').addEventListener('change', parcelData)
     selecter('#weight').addEventListener('change', parcelData)
-    form.addEventListener('change', e => {
+    form.addEventListener('submit', e => {
       const messange = validationWhatSend(e)
       if (messange) {
         if (messange === 'success') {
@@ -279,11 +287,13 @@ export default class Ui {
             <span class="material-icons-outlined">watch_later</span>
             <p>${time} ${timeUnit}</p>
             </section>
+            <button class="btn btn-primary m-2">Nueva encomienda</button>
           </div>
       </div>
     </div>
     `
     this.mainElement.appendChild(article)
+    selecter('button.btn').addEventListener('click', (e) => { reset(), this.whatSend() })
   }
 
   /**
