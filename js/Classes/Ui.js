@@ -157,19 +157,22 @@ export default class Ui {
     selecter('#high').addEventListener('change', parcelData)
     selecter('#weight').addEventListener('change', parcelData)
     form.addEventListener('change', e => {
-      validationWhatSend(e)
-      this.printAlert()
+      const messange = validationWhatSend(e)
+      console.log(messange)
+      if (messange) {
+        this.printAlert('error', messange)
+      }
     })
   }
 
   /**
    * Crea la vista de ¿desde donde envías? pidiendo la dirección emisora del paquete
    */
-  whereSend (main) {
-    this.clearHtml(main)
+  whereSend () {
+    this.clearHtml(this.mainElement)
 
     // Creamos el título de la vista.
-    this._subtitleCreate(main, '¿A donde envías?')
+    this._subtitleCreate(this.mainElement, '¿A donde envías?')
 
     // Creamos el formulario que contendrá la vista.
     const form = createElement('form')
@@ -185,10 +188,10 @@ export default class Ui {
     // Generamos el select de direcciones para 'from'
     const address = this._addressSelector()
     address.id = 'receivingAddress'
-    address.addEventListener('change', e => { parcelData(e); this.fromWhere(main) })
+    address.addEventListener('change', e => { parcelData(e); this.fromWhere(this.mainElement) })
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
-    main.appendChild(form)
+    this.mainElement.appendChild(form)
 
     // Esto no más es para ir cambiando rápido entre vistas por ahora :v
     // form.addEventListener('change', e => {
@@ -202,11 +205,11 @@ export default class Ui {
   /**
    * Crea la vista de ¿hacia donde envías? pidiendo la dirección receptora del paquete
    */
-  fromWhere (main) {
-    this.clearHtml(main)
+  fromWhere () {
+    this.clearHtml(this.mainElement)
 
     // Creamos el título de la vista.
-    this._subtitleCreate(main, '¿Desde donde envías?')
+    this._subtitleCreate(this.mainElement, '¿Desde donde envías?')
 
     // Creamos el formulario que contendrá la vista.
     const form = createElement('form')
@@ -222,17 +225,17 @@ export default class Ui {
     // Generamos el select de direcciones para 'to'
     const address = this._addressSelector()
     address.id = 'senderAddress'
-    address.addEventListener('change', (e) => { parcelData(e); this.shippingDetail(main) })
+    address.addEventListener('change', (e) => { parcelData(e); this.shippingDetail(this.mainElement) })
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
-    main.appendChild(form)
+    this.mainElement.appendChild(form)
 
     // Esto no más es para ir cambiando rápido entre vistas por ahora :v
     // form.addEventListener('change', e => {
     //   e.preventDefault()
     //   console.log('está cambiando algo dentro del form')
     //   console.log(e.target.value)
-    //   this.shippingDetail(main)
+    //   this.shippingDetail(this.mainElement)
     // })
   }
 
@@ -241,8 +244,8 @@ export default class Ui {
    *  La tarifa incluye: Precio del envío, tiempo estimado, distancia recorrida
    *  Se permite la opción de no asegurar
    */
-  shippingDetail (main) {
-    this.clearHtml(main)
+  shippingDetail () {
+    this.clearHtml(this.mainElement)
     const parcel = new Parcel(parcelObj)
     const presupuesto = parcel.getParcel()
     console.log(presupuesto)
@@ -290,7 +293,7 @@ export default class Ui {
       </div>
     </div>
     `
-    main.appendChild(article)
+    this.mainElement.appendChild(article)
   }
 
   /**

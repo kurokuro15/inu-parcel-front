@@ -22,24 +22,20 @@ export function parcelData (e) {
   console.log(parcelObj)
 }
 
-export function validationWhatSend (e, callback) {
+export function validationWhatSend (e) {
   const montReg = /\d+\.?\d*/
-  const { value, length, width, high, weight, type } = parcelObj
-  if (!type) {
-    return 'Seleccione un tipo de encomienda'
-  } else if (!value || isNaN(value) || !montReg.test(value)) {
-    return 'Ingrese un monto válido.'
-  } else if (
-    isNaN(length) ||
-    isNaN(width) ||
-    isNaN(high) ||
-    !montReg.test(length) ||
-    !montReg.test(width) ||
-    !montReg.test(high)
-  ) {
-    return 'Ingrese una medida válida'
-  } else if (isNaN(weight) || !montReg.test(weight)) {
-    return 'Ingrese un peso válido'
+  const { target } = e
+  const value = parcelObj[target.id]
+
+  const valObj = {
+    type: (!value) ? 'Seleccione un tipo de encomienda' : '',
+    value: (!value || isNaN(value) || !montReg.test(value)) ? 'Ingrese un monto válido.' : '',
+    length: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
+    width: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
+    high: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
+    weight: (isNaN(value) || !montReg.test(value)) ? 'Ingrese un peso válido' : ''
+
   }
-  callback()
+  console.log(target)
+  return valObj[target.id]
 }
