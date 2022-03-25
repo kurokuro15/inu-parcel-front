@@ -293,7 +293,7 @@ export default class Ui {
     </div>
     `
     this.mainElement.appendChild(article)
-    selecter('button.btn').addEventListener('click', (e) => { reset(), this.whatSend() })
+    selecter('button.btn').addEventListener('click', (e) => { reset(); this.whatSend() })
   }
 
   /**
