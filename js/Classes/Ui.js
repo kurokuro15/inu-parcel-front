@@ -158,8 +158,10 @@ export default class Ui {
     selecter('#weight').addEventListener('change', parcelData)
     form.addEventListener('change', e => {
       const messange = validationWhatSend(e)
-      console.log(messange)
       if (messange) {
+        if (messange === 'success') {
+          return this.whereSend()
+        }
         this.printAlert('error', messange)
       }
     })

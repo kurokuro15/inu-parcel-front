@@ -7,14 +7,14 @@ export const selecter = selector => globalThis.document.querySelector(selector)
 export const createElement = element => globalThis.document.createElement(element)
 
 export const parcelObj = {
-  value: 0,
-  length: 0,
-  width: 0,
-  high: 0,
-  weight: 0,
-  type: '',
-  senderAddress: 0,
-  receivingAddress: 0
+  value: null,
+  length: null,
+  width: null,
+  high: null,
+  weight: null,
+  type: null,
+  senderAddress: null,
+  receivingAddress: null
 }
 
 export function parcelData (e) {
@@ -22,7 +22,10 @@ export function parcelData (e) {
   console.log(parcelObj)
 }
 
+let count = 0
+
 export function validationWhatSend (e) {
+  count++
   const montReg = /\d+\.?\d*/
   const { target } = e
   const value = parcelObj[target.id]
@@ -34,8 +37,18 @@ export function validationWhatSend (e) {
     width: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
     high: (isNaN(value) || !montReg.test(value)) ? 'Ingrese una medida válida' : '',
     weight: (isNaN(value) || !montReg.test(value)) ? 'Ingrese un peso válido' : ''
-
   }
-  console.log(target)
+  console.log(count)
+  if (count === 6) {
+    count = 0
+    let emply = 0
+    for (const prop in parcelObj) {
+      console.log(parcelObj[prop], emply)
+      emply += parcelObj[prop] ? 0 : 1
+    }
+    if (emply <= 2) {
+      return 'success'
+    }
+  }
   return valObj[target.id]
 }
