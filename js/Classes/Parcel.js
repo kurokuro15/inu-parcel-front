@@ -26,6 +26,7 @@ export default class Parcel {
     const { name: senderName, x: senderX, y: senderY } = this.senderAddress
     const { name: receivingName, x: receivingX, y: receivingY } = this.receivingAddress
 
+    // Función de distancia entre 2 puntos
     this.distance = Math.sqrt(
       (receivingX - senderX) ** 2 + (receivingY - senderY) ** 2
     ).toFixed(2)
