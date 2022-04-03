@@ -9,9 +9,9 @@ export default class Ui {
   /**
    * Crea la cabecera de la app.
    */
-  header () {
+  header (title = 'Cotizador de envíos') {
     const headerText = createElement('h1')
-    headerText.textContent = 'Cotizador de envíos'
+    headerText.textContent = title
     headerText.classList.add('title', 'text-center', 'my-2', 'text-uppercase')
 
     const header = createElement('header')
@@ -60,7 +60,7 @@ export default class Ui {
     container.appendChild(this.mainElement)
 
     // Esto verifica que no exista ya el formulario.
-    if (!document.querySelector('form.whatsend')) {
+    if (!document.querySelector('form')) {
       this.whatSend()
     }
   }
@@ -149,7 +149,7 @@ export default class Ui {
     </div>
     `
     const button = `
-    <button class="btn btn-primary col-2 " type ="submit">siguiente</button>
+    <button class="btn btn-primary col-md-2" type ="submit">siguiente</button>
     `
     // Introducimos todo el texto como html al formulario y el formulario al marco principal
     form.innerHTML = `${select}${valueInput}${dimensionInput}${weight}${button}`
@@ -312,11 +312,11 @@ export default class Ui {
 
   // Es privada pero por cosas de StandardJS no utilicé el #.
   // Este método crea un subtitulo pasándole el texto y el contenedor del subtitulo
-  _subtitleCreate (main, text) {
+  _subtitleCreate (text) {
     const h2 = createElement('h2')
     h2.textContent = text
     h2.classList.add('sub-title')
-    main.appendChild(h2)
+    this.main.appendChild(h2)
   }
 
   // Es privada pero por cosas de StandardJS no utilicé el #.
@@ -343,5 +343,49 @@ export default class Ui {
     </div>
     `
     return select
+  }
+
+  /**
+ *Create a form with classes and childrens that give from params
+ * @param {string[]} classes An array that give all add class.
+ * @param  {...HTMLElement} childrens *args of children, HTMLElements
+ * @returns {HTMLFormElement} a form<HTMLElement>.
+ */
+  _formCreate (classes = [], ...childrens) {
+    const form = createElement('form')
+    form.classList.add('row', 'align-items-center', 'justify-content-center', 'g-3', classes)
+    childrens.forEach(children => children ? form.appendChild(children) : null)
+    return form
+  }
+
+  /**
+   * Create Div with col-md class
+   * @param {number} size number of columns to take
+   * @returns {HTMLDivElement} a Div.col-md-size
+   */
+  _createCol (size = 0) {
+    const div = createElement('div')
+    div.classList.add(`col-md-${size}`)
+    return div
+  }
+
+  /**
+   * Create Div with input-group and input-group-lg classes
+   * @param  {...HTMLElement} elements
+   * @returns {HTMLDivElement} a Div.input-group.input-group-lg
+   */
+  _createInputGroup (...elements) {
+    const div = createElement('div')
+    div.classList.add('input-group', 'input-group-lg')
+    elements.forEach(element => div.appendChild(element))
+    return div
+  }
+
+  registerSection () {
+    this._subtitleCreate('Registro')
+    const classes = ['mx-5', 'p-2']
+    const form = this._formCreate(classes)
+
+    container.appendChild(form)
   }
 }
