@@ -1,5 +1,8 @@
 // Acá estarán ubicados selectores para usar globalmente y funciones que requieren del dom
 
+// LocalStorage save
+//export const sesion = globalThis.localStorage.getItem('sesion') || {}
+
 // Selectors
 export const container = globalThis.document.querySelector('div.container')
 export const selecter = selector => globalThis.document.querySelector(selector)
