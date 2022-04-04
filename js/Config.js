@@ -44,6 +44,165 @@ export default {
       singular: ['gramo', 'kilogramo', 'tonelada'],
       plural: ['gramos', 'kilogramos', 'toneladas']
     }
+  },
+  inputsProps: {
+    user: {
+      label: 'Usuario',
+      id: 'username',
+      name: 'username',
+      autocomplete: 'username',
+      classList: ['form-control'],
+      type: 'text',
+      placeholder: 'juanGenerico2000',
+      size: 6
+    },
+    pass: {
+      label: 'Contraseña',
+      id: 'password',
+      name: 'password',
+      autocomplete: 'new-password',
+      classList: ['form-control'],
+      type: 'text',
+      placeholder: 'Contraseña123!.',
+      size: 6
+    },
+    name: {
+      label: 'Nombre(s)',
+      id: 'name',
+      name: 'name',
+      autocomplete: 'given-name',
+      classList: ['form-control'],
+      type: 'text',
+      placeholder: 'Juan José',
+      size: 6
+    },
+    lastname: {
+      label: 'Apellido(s)',
+      id: 'lastname',
+      name: 'lastname',
+      autocomplete: 'family-name',
+      classList: ['form-control'],
+      type: 'text',
+      placeholder: 'Melgano Sutano',
+      size: 6
+    },
+    sex: {
+      label: 'Género',
+      id: 'sex',
+      name: 'sex',
+      classList: ['form-select'],
+      autocomplete: 'sex',
+      defaultOption: 'Selecciona...',
+      type: 'select',
+      size: 4
+    },
+    birthday: {
+      label: 'Fecha de Nacimiento',
+      id: 'birthday',
+      name: 'birthday',
+      classList: ['form-control'],
+      type: 'date',
+      autocomplete: 'bday',
+      size: 8
+    },
+    email: {
+      label: 'Correo Electrónico',
+      id: 'email',
+      name: 'email',
+      classList: ['form-control'],
+      type: 'email',
+      autocomplete: 'email',
+      placeholder: 'correo@example.com',
+      size: 6
+    },
+    phone: {
+      label: 'Teléfono Móvil',
+      id: 'phone',
+      name: 'phone',
+      classList: ['form-control'],
+      type: 'tel',
+      autocomplete: 'tel',
+      placeholder: '+58(412)123.45.67',
+      size: 6
+    },
+    country: {
+      label: 'País',
+      id: 'country',
+      name: 'country',
+      classList: ['form-select'],
+      autocomplete: 'country',
+      defaultOption: 'Selecciona...',
+      type: 'select',
+      size: 4
+    },
+    state: {
+      label: 'Estado',
+      id: 'state',
+      name: 'state',
+      classList: ['form-select'],
+      autocomplete: 'state',
+      defaultOption: 'Selecciona...',
+      type: 'select',
+      size: 4
+    },
+    municipality: {
+      label: 'Municipio',
+      id: 'municipality',
+      name: 'municipality',
+      classList: ['form-select'],
+      autocomplete: 'municipality',
+      defaultOption: 'Selecciona...',
+      type: 'select',
+      size: 4
+    },
+    parish: {
+      label: 'Parroquia',
+      id: 'parish',
+      name: 'parish',
+      classList: ['form-select'],
+      autocomplete: 'parish',
+      defaultOption: 'Selecciona...',
+      type: 'select',
+      size: 4
+    },
+    zipcode: {
+      label: 'Postal',
+      id: 'zipcode',
+      name: 'zipcode',
+      classList: ['form-control'],
+      type: 'text',
+      autocomplete: 'postal-code',
+      placeholder: '1001',
+      size: 3
+    },
+    numberHouse: {
+      label: 'Número Apto/Casa/Oficina',
+      id: 'numberHouse',
+      name: 'numberHouse',
+      classList: ['form-control'],
+      type: 'text',
+      placeholder: 'Local B-4',
+      size: 5
+    },
+    street: {
+      label: 'Avenida(s) y/o calle(s)',
+      id: 'street',
+      name: 'street',
+      classList: ['form-control'],
+      type: 'text',
+      placeholder: 'Av. Existe con Calle Falsa',
+      autocomplete: 'street-address',
+      size: 6
+    },
+    reference: {
+      label: 'Referencia',
+      id: 'reference',
+      name: 'reference',
+      classList: ['form-control'],
+      type: 'text',
+      placeholder: 'Al lado del Mc. Pollo',
+      autocomplete: 'address-line2',
+      size: 6
+    }
   }
-
 }
