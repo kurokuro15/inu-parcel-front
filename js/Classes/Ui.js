@@ -2,7 +2,7 @@ import config from '../Config.js'
 import {
   container,
   createElement,
-  parcelData, parcelObj, reset, selecter, validationWhatSend
+  insertDataObj, dataObjParcel, resetDataObj, selecter, validationDataObj
 } from '../GlobalSelectors.js'
 import Parcel from './Parcel.js'
 export default class Ui {
@@ -167,14 +167,14 @@ export default class Ui {
 
     // Añadimos parcelData como escucha del evento change a cada input para ir almacenando y
     // al hacer submit validar la información
-    selecter('#type').addEventListener('change', parcelData)
-    selecter('#value').addEventListener('change', parcelData)
-    selecter('#length').addEventListener('change', parcelData)
-    selecter('#width').addEventListener('change', parcelData)
-    selecter('#high').addEventListener('change', parcelData)
-    selecter('#weight').addEventListener('change', parcelData)
+    selecter('#type').addEventListener('change', insertDataObj)
+    selecter('#value').addEventListener('change', insertDataObj)
+    selecter('#length').addEventListener('change', insertDataObj)
+    selecter('#width').addEventListener('change', insertDataObj)
+    selecter('#high').addEventListener('change', insertDataObj)
+    selecter('#weight').addEventListener('change', insertDataObj)
     form.addEventListener('submit', e => {
-      const messange = validationWhatSend(e)
+      const messange = validationDataObj(e)
       if (messange) {
         if (messange === 'success') {
           return this.whereSend()
@@ -210,7 +210,7 @@ export default class Ui {
     const address = this._addressSelector()
     address.id = 'receivingAddress'
     address.addEventListener('change', e => {
-      parcelData(e)
+      insertDataObj(e)
       this.fromWhere(this.mainElement)
     })
 
@@ -245,7 +245,7 @@ export default class Ui {
     const address = this._addressSelector()
     address.id = 'senderAddress'
     address.addEventListener('change', e => {
-      parcelData(e)
+      insertDataObj(e)
       this.shippingDetail(this.mainElement)
     })
 
@@ -262,7 +262,7 @@ export default class Ui {
   shippingDetail () {
     this._clearHtml(this.mainElement)
     // Traemos la clase Parcel y hacemos una instancia.
-    const parcel = new Parcel(parcelObj)
+    const parcel = new Parcel(dataObjParcel)
 
     // llamamos al método que nos devuelve los cálculos :D
     const presupuesto = parcel.getParcel()
@@ -318,7 +318,7 @@ export default class Ui {
     this.mainElement.appendChild(article)
 
     selecter('button.btn').addEventListener('click', () => {
-      reset()
+      resetDataObj()
       this.whatSend()
     })
   }

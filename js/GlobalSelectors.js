@@ -1,7 +1,7 @@
 // Acá estarán ubicados selectores para usar globalmente y funciones que requieren del dom
 
 // LocalStorage save
-//export const sesion = globalThis.localStorage.getItem('sesion') || {}
+// export const sesion = globalThis.localStorage.getItem('sesion') || {}
 
 // Selectors
 export const container = globalThis.document.querySelector('div.container')
@@ -9,7 +9,7 @@ export const selecter = selector => globalThis.document.querySelector(selector)
 // Functions
 export const createElement = element => globalThis.document.createElement(element)
 
-export const parcelObj = {
+export const dataObjParcel = {
   value: null,
   length: null,
   width: null,
@@ -20,15 +20,15 @@ export const parcelObj = {
   receivingAddress: null
 }
 
-export function parcelData (e) {
-  parcelObj[e.target.id] = e.target.value
+export function insertDataObj (e) {
+  dataObjParcel[e.target.id] = e.target.value
 }
 
-export function validationWhatSend (e) {
+export function validationDataObj (e) {
   e.preventDefault()
   const montReg = /\d+\.?\d*/
   const { value, length, width, high, weight, type } =
-    parcelObj
+    dataObjParcel
   if (
     !value ||
     !length ||
@@ -51,8 +51,8 @@ export function validationWhatSend (e) {
   return 'success'
 }
 
-export function reset () {
-  for (const key in parcelObj) {
-    parcelObj[key] = 0
+export function resetDataObj () {
+  for (const key in dataObjParcel) {
+    dataObjParcel[key] = 0
   }
 }
