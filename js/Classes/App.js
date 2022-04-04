@@ -1,5 +1,4 @@
 import Ui from './Ui.js'
-
 export class App {
   constructor () {
     this.ui = new Ui()
