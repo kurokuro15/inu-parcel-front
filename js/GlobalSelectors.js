@@ -56,3 +56,9 @@ export function resetDataObj () {
     dataObjParcel[key] = 0
   }
 }
+
+export function formToJSON (target) {
+  return Object.fromEntries(
+    new globalThis.FormData(target)
+  )
+}
