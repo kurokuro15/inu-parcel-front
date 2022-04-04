@@ -1,4 +1,5 @@
 import config from '../Config.js'
+import Validator from './Validation.js'
 import {
   container,
   createElement,
@@ -26,7 +27,7 @@ export default class Ui {
     container.appendChild(hr)
   }
 
-  printAlert (type, messange) {
+  static printAlert (type, messange) {
     // XD ya el time y la cabeza no me dan para refactorizar estas cosas :v Por ahora
     if (selecter('div.alert')) {
       selecter('div.alert').remove()
@@ -179,7 +180,7 @@ export default class Ui {
         if (messange === 'success') {
           return this.whereSend()
         }
-        this.printAlert('error', messange)
+        Ui.printAlert('error', messange)
       }
     })
   }
@@ -438,7 +439,7 @@ export default class Ui {
     ]
     const formClasses = ['mx-5', 'p-2']
     const form = this._formCreate(formClasses, ...formComponents)
-
+    form.addEventListener('submit', Validator.signinForm)
     // Se mete el form al container principal, aunque creo debo meterlo en el main ...
     this.mainElement.appendChild(form)
   }
@@ -495,7 +496,7 @@ export default class Ui {
   }
 
   /**
-   *Create a form with classes and childrens that give from params
+   * Create a form with classes and childrens that give from params
    * @param {string[]} classes An array that give all add class.
    * @param  {...HTMLElement} childrens *args of children, HTMLElements
    * @returns {HTMLFormElement} a form<HTMLElement>.
