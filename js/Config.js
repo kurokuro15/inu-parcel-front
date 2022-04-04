@@ -62,7 +62,7 @@ export default {
       name: 'password',
       autocomplete: 'new-password',
       classList: ['form-control'],
-      type: 'text',
+      type: 'password',
       placeholder: 'Contraseña123!.',
       size: 6
     },
@@ -122,7 +122,7 @@ export default {
       classList: ['form-control'],
       type: 'tel',
       autocomplete: 'tel',
-      placeholder: '+58(412)123.45.67',
+      placeholder: '+58(412)-123-4567',
       size: 6
     },
     country: {
