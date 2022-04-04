@@ -1,4 +1,12 @@
-import { container, createElement, parcelData, selecter, parcelObj, validationWhatSend, reset } from '../GlobalSelectors.js'
+import {
+  container,
+  createElement,
+  parcelData,
+  selecter,
+  parcelObj,
+  validationWhatSend,
+  reset
+} from '../GlobalSelectors.js'
 import config from '../Config.js'
 import Parcel from './Parcel.js'
 export default class Ui {
@@ -58,7 +66,7 @@ export default class Ui {
     this.mainElement = createElement('main')
     this.mainElement.classList.add('my-3', 'text-center')
     container.appendChild(this.mainElement)
-
+    this.signinSection()
     // Esto verifica que no exista ya el formulario.
     if (!document.querySelector('form')) {
       this.whatSend()
@@ -75,7 +83,7 @@ export default class Ui {
     const { productsType } = this.config
 
     // Creamos el título de la vista.
-    this._subtitleCreate(this.mainElement, '¿Qué envías?')
+    this._subtitleCreate('¿Qué envías?')
 
     // Creamos el formulario que contendrá la vista.
     const form = createElement('form')
@@ -198,7 +206,10 @@ export default class Ui {
     // Generamos el select de direcciones para 'from'
     const address = this._addressSelector()
     address.id = 'receivingAddress'
-    address.addEventListener('change', e => { parcelData(e); this.fromWhere(this.mainElement) })
+    address.addEventListener('change', e => {
+      parcelData(e)
+      this.fromWhere(this.mainElement)
+    })
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
     this.mainElement.appendChild(form)
@@ -227,7 +238,10 @@ export default class Ui {
     // Generamos el select de direcciones para 'to'
     const address = this._addressSelector()
     address.id = 'senderAddress'
-    address.addEventListener('change', (e) => { parcelData(e); this.shippingDetail(this.mainElement) })
+    address.addEventListener('change', e => {
+      parcelData(e)
+      this.shippingDetail(this.mainElement)
+    })
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
     this.mainElement.appendChild(form)
@@ -246,7 +260,8 @@ export default class Ui {
     // llamamos al método que nos devuelve los cálculos :D
     const presupuesto = parcel.getParcel()
 
-    const { raw, tax, amount, origin, destiny, distance, time, distanceUnit, timeUnit } = presupuesto
+    const { raw, tax, amount, origin, destiny, distance, time, distanceUnit, timeUnit } =
+      presupuesto
 
     const article = createElement('article')
     article.classList.add('row', 'justify-content-center')
@@ -293,7 +308,10 @@ export default class Ui {
     </div>
     `
     this.mainElement.appendChild(article)
-    selecter('button.btn').addEventListener('click', (e) => { reset(); this.whatSend() })
+    selecter('button.btn').addEventListener('click', e => {
+      reset()
+      this.whatSend()
+    })
   }
 
   /**
@@ -316,7 +334,7 @@ export default class Ui {
     const h2 = createElement('h2')
     h2.textContent = text
     h2.classList.add('sub-title')
-    this.main.appendChild(h2)
+    this.mainElement.appendChild(h2)
   }
 
   // Es privada pero por cosas de StandardJS no utilicé el #.
@@ -326,10 +344,12 @@ export default class Ui {
 
     const select = createElement('select')
     select.classList.add('form-select')
-    const options = addresses.map((address) => {
-      const { id, name } = address
-      return `<option value='${id}'>${name}</option>`
-    }).join('')
+    const options = addresses
+      .map(address => {
+        const { id, name } = address
+        return `<option value='${id}'>${name}</option>`
+      })
+      .join('')
 
     select.innerHTML = `
     <div class="col-md-6">
@@ -346,26 +366,34 @@ export default class Ui {
   }
 
   /**
- *Create a form with classes and childrens that give from params
- * @param {string[]} classes An array that give all add class.
- * @param  {...HTMLElement} childrens *args of children, HTMLElements
- * @returns {HTMLFormElement} a form<HTMLElement>.
- */
+   *Create a form with classes and childrens that give from params
+   * @param {string[]} classes An array that give all add class.
+   * @param  {...HTMLElement} childrens *args of children, HTMLElements
+   * @returns {HTMLFormElement} a form<HTMLElement>.
+   */
   _formCreate (classes = [], ...childrens) {
     const form = createElement('form')
-    form.classList.add('row', 'align-items-center', 'justify-content-center', 'g-3', classes)
-    childrens.forEach(children => children ? form.appendChild(children) : null)
+    form.classList.add(
+      'row',
+      'align-items-center',
+      'justify-content-center',
+      'g-3',
+      ...classes
+    )
+    childrens.forEach(children => (children ? form.appendChild(children) : null))
     return form
   }
 
   /**
    * Create Div with col-md class
    * @param {number} size number of columns to take
+   * @param {string[]} classes string/s or array of strings of classes to add
    * @returns {HTMLDivElement} a Div.col-md-size
    */
-  _createCol (size = 0) {
+  _createCol (size = 0, classes) {
     const div = createElement('div')
     div.classList.add(`col-md-${size}`)
+    if (classes) div.classList.add(classes)
     return div
   }
 
@@ -381,11 +409,217 @@ export default class Ui {
     return div
   }
 
-  registerSection () {
-    this._subtitleCreate('Registro')
-    const classes = ['mx-5', 'p-2']
-    const form = this._formCreate(classes)
+  /**
+   * Create span element from identify inputs
+   * @param {string} text A string
+   * @returns {HTMLSpanElement} a span.input-group-text
+   */
+  _createSpanGroup (text) {
+    const span = createElement('span')
+    span.classList.add('input-group-text')
+    span.textContent = text
+    return span
+  }
 
-    container.appendChild(form)
+  /**
+   * Create an HTMLInputElemnt with object of data pass
+   * @param {*} inputsProps Is an object with necesary data for create an input element
+   * @returns {HTMLInputElement} with features that passed param
+   */
+  _createFormInput ({
+    id,
+    name = '',
+    autocomplete = '',
+    classList = ['form-control'],
+    type = 'text',
+    placeholder = ''
+  }) {
+    const input = createElement('input')
+    input.id = id
+    input.name = name
+    input.autocomplete = autocomplete
+    input.classList.add(classList)
+    input.type = type
+    input.placeholder = placeholder
+    return input
+  }
+
+  _createFormSelector (
+    { id, name = '', autocomplete = '', classList = ['form-select'], defaultOption },
+    options
+  ) {
+    // Creamos la opción por defecto deshabilitada
+    const disabledOption = createElement('option')
+    disabledOption.disabled = true
+    disabledOption.selected = true
+    disabledOption.textContent = defaultOption
+
+    // Creamos el select y le damos las props que se pasan
+    const select = createElement('select')
+    select.id = id
+    select.name = name
+    select.autocomplete = autocomplete
+    select.classList = classList
+
+    // Hacemos la opción deshabilitada primer hijo del select.
+    select.appendChild(disabledOption)
+
+    // Iteramos sobre el array del argumento 'options', creamos y hacemos hijo de select a c/u
+    options.forEach(option => {
+      const html = createElement('option')
+      html.value = option.value
+      html.textContent = option.title
+      select.appendChild(html)
+    })
+    return select
+  }
+
+  /**
+   * Create a group of HTMLElement that contains col>inputGroup>span input
+   * @param {*} data json object with inputsProps
+   * @returns {HTMLDivElement} a div.col-md
+   */
+  _createFormField (data, options = []) {
+    const { label, size } = data
+    // Vemos si es tipo select, para entonces crear un select y no un input xD
+    let input
+    if (data.type === 'select') {
+      input = this._createFormSelector(data, options)
+    } else {
+      input = this._createFormInput(data)
+    }
+    // Creamos el span, la columna y el group correspondientes
+    const span = this._createSpanGroup(label)
+    const group = this._createInputGroup(span, input)
+    const col = this._createCol(size)
+    col.appendChild(group)
+    return col
+  }
+
+  /**
+   * Create a Form Label without for attribute
+   * @param {*} text the textContent that label have
+   * @returns {HTMLLabelElement}
+   */
+  _createFormLabel (text) {
+    const label = createElement('label')
+    label.classList.add('h3', 'form-label')
+    label.textContent = text
+    return label
+  }
+
+  signinSection () {
+    const {
+      user,
+      pass,
+      name,
+      lastname,
+      sex,
+      birthday,
+      email,
+      phone,
+      country,
+      state,
+      municipality,
+      parish,
+      zipcode,
+      numberHouse,
+      street,
+      reference
+    } = this.config.inputsProps
+    const sexOp = [
+      { title: 'Femenino', value: '1' },
+      { title: 'Masculino', value: '2' },
+      { title: 'Otro', value: '3' }
+    ]
+    // Se crea el sub-titulo
+    this._subtitleCreate('Registro')
+    // Sección Usuario y contraseña
+    const userCol = this._createFormField(user)
+    const passCol = this._createFormField(pass)
+    // Componente de User
+    const userComponent = [userCol, passCol]
+    // Sección Datos personales
+    const personalLabel = this._createCol(12, 'mt-3')
+    personalLabel.appendChild(this._createFormLabel('Datos Personales'))
+    // Fields
+    const nameCol = this._createFormField(name)
+    const lastnameCol = this._createFormField(lastname)
+    const sexCol = this._createFormField(sex, sexOp)
+    const birthdayCol = this._createFormField(birthday)
+    // Componente de Datos Personales
+    const personalComponent = [personalLabel, nameCol, lastnameCol, sexCol, birthdayCol]
+    // Sección Contácto
+    const contactLabel = this._createCol(12, 'mt-3')
+    contactLabel.appendChild(this._createFormLabel('Datos de contacto'))
+    // Fields
+    const emailCol = this._createFormField(email)
+    const phoneCol = this._createFormField(phone)
+    // Componente de Contacto
+    const contactComponent = [contactLabel, emailCol, phoneCol]
+    // Sección Dirección
+    const addressLabel = this._createCol(12, 'mt-3')
+    addressLabel.appendChild(this._createFormLabel('Dirección'))
+    // Fields
+    const countryCol = this._createFormField(country)
+    const stateCol = this._createFormField(state)
+    const municipalityCol = this._createFormField(municipality)
+    const parishCol = this._createFormField(parish)
+    const zipCol = this._createFormField(zipcode)
+    const numberCol = this._createFormField(numberHouse)
+    const streetCol = this._createFormField(street)
+    const referenceCol = this._createFormField(reference)
+    // Componente de dirección
+    const addressComponents = [
+      addressLabel,
+      countryCol,
+      stateCol,
+      municipalityCol,
+      parishCol,
+      zipCol,
+      numberCol,
+      streetCol,
+      referenceCol
+    ]
+    // Botones :D
+    const btnDiv = createElement('div')
+    btnDiv.classList.add('row', 'p-3', 'mt-4', 'justify-content-between')
+    const backBtn = this._createBtn({
+      classList: ['btn', 'btn-primary'],
+      size: '4',
+      text: 'Atrás',
+      type: 'reset'
+    })
+    btnDiv.appendChild(backBtn)
+    const signinBtn = this._createBtn({
+      classList: ['btn', 'btn-success'],
+      size: '4',
+      text: 'Registrarme',
+      type: 'submit'
+    })
+    btnDiv.appendChild(signinBtn)
+    // Se crea un arreglo con las clases extras de este form y el form en cuestión
+    const formComponents = [
+      ...userComponent,
+      ...personalComponent,
+      ...contactComponent,
+      ...addressComponents,
+      btnDiv
+    ]
+    const formClasses = ['mx-5', 'p-2']
+    const form = this._formCreate(formClasses, ...formComponents)
+    // Se mete el form al container principal, aunque creo debo meterlo en el main ...
+    this.mainElement.appendChild(form)
+  }
+
+  _createBtn (props) {
+    const { text, type, classList, size } = props
+    const btn = createElement('button')
+    btn.textContent = text
+    btn.type = type
+    btn.classList.add(...classList)
+    const col = this._createCol(size)
+    col.appendChild(btn)
+    return col
   }
 }
