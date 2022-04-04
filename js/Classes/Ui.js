@@ -1,13 +1,9 @@
+import config from '../Config.js'
 import {
   container,
   createElement,
-  parcelData,
-  selecter,
-  parcelObj,
-  validationWhatSend,
-  reset
+  parcelData, parcelObj, reset, selecter, validationWhatSend
 } from '../GlobalSelectors.js'
-import config from '../Config.js'
 import Parcel from './Parcel.js'
 export default class Ui {
   constructor () {
@@ -78,7 +74,7 @@ export default class Ui {
    */
   whatSend () {
     // Limpiamos por si las moscas
-    this.clearHtml(this.mainElement)
+    this._clearHtml(this.mainElement)
 
     const { productsType } = this.config
 
@@ -96,6 +92,7 @@ export default class Ui {
         return `<option value="${type}">${type}</option>`
       })
       .join('')
+
     // Como es 'mucho texto' creamos un string con el contenido HTML del select
     const select = `
     <div class="col-md-6">
@@ -119,6 +116,7 @@ export default class Ui {
       </div>
     </div>
     `
+
     // Se define los tres inputs de las dimensiones, alto por ancho por alto
     const dimensionInput = `
     <div class="col-md-8">
@@ -146,6 +144,7 @@ export default class Ui {
       </div>
     </div>
     `
+
     // Más de lo mismo, con el input de peso
     const weight = `
     <div class="col-md-4">
@@ -156,18 +155,20 @@ export default class Ui {
       </div>
     </div>
     `
+
+    // Botoncito
     const button = `
     <button class="btn btn-primary col-md-2" type ="submit">siguiente</button>
     `
+
     // Introducimos todo el texto como html al formulario y el formulario al marco principal
     form.innerHTML = `${select}${valueInput}${dimensionInput}${weight}${button}`
     this.mainElement.appendChild(form)
 
-    // Acá le metemos esa función, que ahorita reemplazaré por la de validación.. O la añado global? :v
-    // acá falta la validación. Se me ocurre validar el objeto en lugar de los inputs
+    // Añadimos parcelData como escucha del evento change a cada input para ir almacenando y
+    // al hacer submit validar la información
     selecter('#type').addEventListener('change', parcelData)
     selecter('#value').addEventListener('change', parcelData)
-
     selecter('#length').addEventListener('change', parcelData)
     selecter('#width').addEventListener('change', parcelData)
     selecter('#high').addEventListener('change', parcelData)
@@ -187,7 +188,7 @@ export default class Ui {
    * Crea la vista de ¿desde donde envías? pidiendo la dirección emisora del paquete
    */
   whereSend () {
-    this.clearHtml(this.mainElement)
+    this._clearHtml(this.mainElement)
 
     // Creamos el título de la vista.
     this._subtitleCreate(this.mainElement, '¿A donde envías?')
@@ -195,6 +196,7 @@ export default class Ui {
     // Creamos el formulario que contendrá la vista.
     const form = createElement('form')
     form.classList = 'row align-items-center g-3 m-2 pb-3 justify-content-center'
+
     // Traemos el selector de direcciones y lo metemos en el form...
     form.innerHTML = `
     <div class="col-auto ">
@@ -203,6 +205,7 @@ export default class Ui {
       </div>
     </div>
     `
+
     // Generamos el select de direcciones para 'from'
     const address = this._addressSelector()
     address.id = 'receivingAddress'
@@ -210,6 +213,7 @@ export default class Ui {
       parcelData(e)
       this.fromWhere(this.mainElement)
     })
+
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
     this.mainElement.appendChild(form)
@@ -219,7 +223,7 @@ export default class Ui {
    * Crea la vista de ¿hacia donde envías? pidiendo la dirección receptora del paquete
    */
   fromWhere () {
-    this.clearHtml(this.mainElement)
+    this._clearHtml(this.mainElement)
 
     // Creamos el título de la vista.
     this._subtitleCreate(this.mainElement, '¿Desde donde envías?')
@@ -227,6 +231,7 @@ export default class Ui {
     // Creamos el formulario que contendrá la vista.
     const form = createElement('form')
     form.classList = 'row align-items-center g-3 m-2 pb-3 justify-content-center'
+
     // Traemos el selector de direcciones y lo metemos en el form...
     form.innerHTML = `
     <div class="col-auto ">
@@ -235,6 +240,7 @@ export default class Ui {
       </div>
     </div>
     `
+
     // Generamos el select de direcciones para 'to'
     const address = this._addressSelector()
     address.id = 'senderAddress'
@@ -242,6 +248,7 @@ export default class Ui {
       parcelData(e)
       this.shippingDetail(this.mainElement)
     })
+
     // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
     form.firstElementChild.firstElementChild.appendChild(address)
     this.mainElement.appendChild(form)
@@ -253,7 +260,7 @@ export default class Ui {
    *  Se permite la opción de no asegurar
    */
   shippingDetail () {
-    this.clearHtml(this.mainElement)
+    this._clearHtml(this.mainElement)
     // Traemos la clase Parcel y hacemos una instancia.
     const parcel = new Parcel(parcelObj)
 
@@ -307,17 +314,139 @@ export default class Ui {
       </div>
     </div>
     `
+
     this.mainElement.appendChild(article)
-    selecter('button.btn').addEventListener('click', e => {
+
+    selecter('button.btn').addEventListener('click', () => {
       reset()
       this.whatSend()
     })
   }
 
+  signinSection () {
+    const {
+      user,
+      pass,
+      name,
+      lastname,
+      sex,
+      birthday,
+      email,
+      phone,
+      country,
+      state,
+      municipality,
+      parish,
+      zipcode,
+      numberHouse,
+      street,
+      reference
+    } = this.config.inputsProps
+
+    const sexOp = [
+      { title: 'Femenino', value: '1' },
+      { title: 'Masculino', value: '2' },
+      { title: 'Otro', value: '3' }
+    ]
+
+    // Se crea el sub-titulo
+    this._subtitleCreate('Registro')
+
+    // Sección Usuario y contraseña
+    const userCol = this._createFormField(user)
+    const passCol = this._createFormField(pass)
+
+    // Componente de User
+    const userComponent = [userCol, passCol]
+
+    // Sección Datos personales
+    const personalLabel = this._createCol(12, 'mt-3')
+    personalLabel.appendChild(this._createFormLabel('Datos Personales'))
+
+    // Fields
+    const nameCol = this._createFormField(name)
+    const lastnameCol = this._createFormField(lastname)
+    const sexCol = this._createFormField(sex, sexOp)
+    const birthdayCol = this._createFormField(birthday)
+
+    // Componente de Datos Personales
+    const personalComponent = [personalLabel, nameCol, lastnameCol, sexCol, birthdayCol]
+
+    // Sección Contácto
+    const contactLabel = this._createCol(12, 'mt-3')
+    contactLabel.appendChild(this._createFormLabel('Datos de contacto'))
+
+    // Fields
+    const emailCol = this._createFormField(email)
+    const phoneCol = this._createFormField(phone)
+
+    // Componente de Contacto
+    const contactComponent = [contactLabel, emailCol, phoneCol]
+
+    // Sección Dirección
+    const addressLabel = this._createCol(12, 'mt-3')
+    addressLabel.appendChild(this._createFormLabel('Dirección'))
+
+    // Fields
+    const countryCol = this._createFormField(country)
+    const stateCol = this._createFormField(state)
+    const municipalityCol = this._createFormField(municipality)
+    const parishCol = this._createFormField(parish)
+    const zipCol = this._createFormField(zipcode)
+    const numberCol = this._createFormField(numberHouse)
+    const streetCol = this._createFormField(street)
+    const referenceCol = this._createFormField(reference)
+
+    // Componente de dirección
+    const addressComponents = [
+      addressLabel,
+      countryCol,
+      stateCol,
+      municipalityCol,
+      parishCol,
+      zipCol,
+      numberCol,
+      streetCol,
+      referenceCol
+    ]
+
+    // Botones :D
+    const btnDiv = createElement('div')
+    btnDiv.classList.add('row', 'p-3', 'mt-4', 'justify-content-between')
+    const backBtn = this._createBtn({
+      classList: ['btn', 'btn-primary'],
+      size: '4',
+      text: 'Atrás',
+      type: 'reset'
+    })
+    btnDiv.appendChild(backBtn)
+    const signinBtn = this._createBtn({
+      classList: ['btn', 'btn-success'],
+      size: '4',
+      text: 'Registrarme',
+      type: 'submit'
+    })
+    btnDiv.appendChild(signinBtn)
+
+    // Se crea un arreglo con las clases extras de este form y el form en cuestión
+    const formComponents = [
+      ...userComponent,
+      ...personalComponent,
+      ...contactComponent,
+      ...addressComponents,
+      btnDiv
+    ]
+    const formClasses = ['mx-5', 'p-2']
+    const form = this._formCreate(formClasses, ...formComponents)
+
+    // Se mete el form al container principal, aunque creo debo meterlo en el main ...
+    this.mainElement.appendChild(form)
+  }
+
   /**
    * Limpia la vista para no crear elementos html innecesarios
    */
-  clearHtml (parent) {
+  _clearHtml (parent) {
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild)
     }
@@ -326,7 +455,7 @@ export default class Ui {
   /**
    * función que permite retroceder a la vista anterior
    */
-  toBack (present, previous) {}
+  toBack () {}
 
   // Es privada pero por cosas de StandardJS no utilicé el #.
   // Este método crea un subtitulo pasándole el texto y el contenedor del subtitulo
@@ -481,6 +610,7 @@ export default class Ui {
    */
   _createFormField (data, options = []) {
     const { label, size } = data
+
     // Vemos si es tipo select, para entonces crear un select y no un input xD
     let input
     if (data.type === 'select') {
@@ -488,6 +618,7 @@ export default class Ui {
     } else {
       input = this._createFormInput(data)
     }
+
     // Creamos el span, la columna y el group correspondientes
     const span = this._createSpanGroup(label)
     const group = this._createInputGroup(span, input)
@@ -508,110 +639,11 @@ export default class Ui {
     return label
   }
 
-  signinSection () {
-    const {
-      user,
-      pass,
-      name,
-      lastname,
-      sex,
-      birthday,
-      email,
-      phone,
-      country,
-      state,
-      municipality,
-      parish,
-      zipcode,
-      numberHouse,
-      street,
-      reference
-    } = this.config.inputsProps
-    const sexOp = [
-      { title: 'Femenino', value: '1' },
-      { title: 'Masculino', value: '2' },
-      { title: 'Otro', value: '3' }
-    ]
-    // Se crea el sub-titulo
-    this._subtitleCreate('Registro')
-    // Sección Usuario y contraseña
-    const userCol = this._createFormField(user)
-    const passCol = this._createFormField(pass)
-    // Componente de User
-    const userComponent = [userCol, passCol]
-    // Sección Datos personales
-    const personalLabel = this._createCol(12, 'mt-3')
-    personalLabel.appendChild(this._createFormLabel('Datos Personales'))
-    // Fields
-    const nameCol = this._createFormField(name)
-    const lastnameCol = this._createFormField(lastname)
-    const sexCol = this._createFormField(sex, sexOp)
-    const birthdayCol = this._createFormField(birthday)
-    // Componente de Datos Personales
-    const personalComponent = [personalLabel, nameCol, lastnameCol, sexCol, birthdayCol]
-    // Sección Contácto
-    const contactLabel = this._createCol(12, 'mt-3')
-    contactLabel.appendChild(this._createFormLabel('Datos de contacto'))
-    // Fields
-    const emailCol = this._createFormField(email)
-    const phoneCol = this._createFormField(phone)
-    // Componente de Contacto
-    const contactComponent = [contactLabel, emailCol, phoneCol]
-    // Sección Dirección
-    const addressLabel = this._createCol(12, 'mt-3')
-    addressLabel.appendChild(this._createFormLabel('Dirección'))
-    // Fields
-    const countryCol = this._createFormField(country)
-    const stateCol = this._createFormField(state)
-    const municipalityCol = this._createFormField(municipality)
-    const parishCol = this._createFormField(parish)
-    const zipCol = this._createFormField(zipcode)
-    const numberCol = this._createFormField(numberHouse)
-    const streetCol = this._createFormField(street)
-    const referenceCol = this._createFormField(reference)
-    // Componente de dirección
-    const addressComponents = [
-      addressLabel,
-      countryCol,
-      stateCol,
-      municipalityCol,
-      parishCol,
-      zipCol,
-      numberCol,
-      streetCol,
-      referenceCol
-    ]
-    // Botones :D
-    const btnDiv = createElement('div')
-    btnDiv.classList.add('row', 'p-3', 'mt-4', 'justify-content-between')
-    const backBtn = this._createBtn({
-      classList: ['btn', 'btn-primary'],
-      size: '4',
-      text: 'Atrás',
-      type: 'reset'
-    })
-    btnDiv.appendChild(backBtn)
-    const signinBtn = this._createBtn({
-      classList: ['btn', 'btn-success'],
-      size: '4',
-      text: 'Registrarme',
-      type: 'submit'
-    })
-    btnDiv.appendChild(signinBtn)
-    // Se crea un arreglo con las clases extras de este form y el form en cuestión
-    const formComponents = [
-      ...userComponent,
-      ...personalComponent,
-      ...contactComponent,
-      ...addressComponents,
-      btnDiv
-    ]
-    const formClasses = ['mx-5', 'p-2']
-    const form = this._formCreate(formClasses, ...formComponents)
-    // Se mete el form al container principal, aunque creo debo meterlo en el main ...
-    this.mainElement.appendChild(form)
-  }
-
+  /**
+  *
+  * @param {*} props
+  * @returns
+  */
   _createBtn (props) {
     const { text, type, classList, size } = props
     const btn = createElement('button')
