@@ -406,8 +406,15 @@ export default class Ui {
     })
 
     const stateCol = this._createFormField(state, await conection.getStates(), async (e) => {
-      const array = await conection.getMunicipalities(e.target.value)
+      // Almacenamos el select de municipio y definimos la primera opción como seleccionada.
       const selector = municipalityCol.querySelector('select')
+      selector.firstElementChild.selected = true
+      // Almacenamos el select de parroquia y definimos la primera opción como seleccionada.
+      const parish = parishCol.querySelector('select')
+      parish.firstElementChild.selected = true
+      this._clearHtml(selector)
+      this._clearHtml(parish)
+      const array = await conection.getMunicipalities(e.target.value)
       this._createOptionElements(
         selector,
         array
