@@ -1,6 +1,5 @@
 import { formToJSON } from '../GlobalSelectors.js'
-import Ui from './ui.js'
-// validateSignin
+import Ui from './Ui.js'
 export default class Validator {
   /**
    * Validación del cuerpo del formulario de registro
