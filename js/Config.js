@@ -1,4 +1,6 @@
 export default {
+  path: '/venezuela.json',
+  URL: 'https://apimocha.com/kurokuro15/states',
   productsType: [
     {
       type: 'Paquete',
@@ -56,7 +58,7 @@ export default {
       placeholder: 'juanGenerico2000',
       size: 6
     },
-    pass: {
+    newPass: {
       label: 'Contraseña',
       id: 'password',
       name: 'password',
@@ -65,6 +67,16 @@ export default {
       type: 'password',
       placeholder: 'Contraseña123!.',
       size: 6
+    },
+    pass: {
+      label: 'Contraseña',
+      id: 'password',
+      name: 'password',
+      autocomplete: 'current-password',
+      classList: ['form-control'],
+      type: 'password',
+      placeholder: 'Contraseña123!.',
+      size: 2
     },
     name: {
       label: 'Nombre(s)',

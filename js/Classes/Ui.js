@@ -3,9 +3,14 @@ import Validator from './Validation.js'
 import {
   container,
   createElement,
-  insertDataObj, dataObjParcel, resetDataObj, selecter, validationDataObj
+  insertDataObj,
+  dataObjParcel,
+  resetDataObj,
+  selecter,
+  validationDataObj
 } from '../GlobalSelectors.js'
 import Parcel from './Parcel.js'
+import conection from './Conection.js'
 export default class Ui {
   constructor () {
     this.config = config
@@ -27,7 +32,7 @@ export default class Ui {
     container.appendChild(hr)
   }
 
-  static printAlert (type, messange) {
+  printAlert (type, messange) {
     // XD ya el time y la cabeza no me dan para refactorizar estas cosas :v Por ahora
     if (selecter('div.alert')) {
       selecter('div.alert').remove()
@@ -63,10 +68,10 @@ export default class Ui {
     this.mainElement = createElement('main')
     this.mainElement.classList.add('my-3', 'text-center')
     container.appendChild(this.mainElement)
-    this.signinSection()
-    // Esto verifica que no exista ya el formulario.
+
+    // Esto verifica que no exista ya un formulario.
     if (!document.querySelector('form')) {
-      this.whatSend()
+      this.signinSection()
     }
   }
 
@@ -180,7 +185,7 @@ export default class Ui {
         if (messange === 'success') {
           return this.whereSend()
         }
-        Ui.printAlert('error', messange)
+        this.printAlert('error', messange)
       }
     })
   }
@@ -324,10 +329,10 @@ export default class Ui {
     })
   }
 
-  signinSection () {
+  async signinSection () {
     const {
       user,
-      pass,
+      newPass,
       name,
       lastname,
       sex,
@@ -345,9 +350,9 @@ export default class Ui {
     } = this.config.inputsProps
 
     const sexOp = [
-      { title: 'Femenino', value: '1' },
-      { title: 'Masculino', value: '2' },
-      { title: 'Otro', value: '3' }
+      'Femenino',
+      'Masculino',
+      'Otro'
     ]
 
     // Se crea el sub-titulo
@@ -355,7 +360,7 @@ export default class Ui {
 
     // Sección Usuario y contraseña
     const userCol = this._createFormField(user)
-    const passCol = this._createFormField(pass)
+    const passCol = this._createFormField(newPass)
 
     // Componente de User
     const userComponent = [userCol, passCol]
@@ -389,10 +394,27 @@ export default class Ui {
     addressLabel.appendChild(this._createFormLabel('Dirección'))
 
     // Fields
-    const countryCol = this._createFormField(country)
-    const stateCol = this._createFormField(state)
-    const municipalityCol = this._createFormField(municipality)
     const parishCol = this._createFormField(parish)
+
+    const municipalityCol = this._createFormField(municipality, [], async (e) => {
+      const array = await conection.getParishes(e.target.value)
+      const selector = parishCol.querySelector('select')
+      this._createOptionElements(
+        selector,
+        array
+      )
+    })
+
+    const stateCol = this._createFormField(state, await conection.getStates(), async (e) => {
+      const array = await conection.getMunicipalities(e.target.value)
+      const selector = municipalityCol.querySelector('select')
+      this._createOptionElements(
+        selector,
+        array
+      )
+    })
+
+    const countryCol = this._createFormField(country, ['Venezuela'])
     const zipCol = this._createFormField(zipcode)
     const numberCol = this._createFormField(numberHouse)
     const streetCol = this._createFormField(street)
@@ -439,7 +461,11 @@ export default class Ui {
     ]
     const formClasses = ['mx-5', 'p-2']
     const form = this._formCreate(formClasses, ...formComponents)
-    form.addEventListener('submit', Validator.signinForm)
+    form.addEventListener('submit', e => {
+      Validator.validateSignin(e, () => {
+        this.whatSend()
+      })
+    })
     // Se mete el form al container principal, aunque creo debo meterlo en el main ...
     this.mainElement.appendChild(form)
   }
@@ -448,7 +474,10 @@ export default class Ui {
    * Limpia la vista para no crear elementos html innecesarios
    */
   _clearHtml (parent) {
-    while (parent.firstChild) {
+    while (parent.firstChild !== parent.lastChild) {
+      parent.removeChild(parent.lastChild)
+    }
+    if (parent.type !== 'select-one') {
       parent.removeChild(parent.firstChild)
     }
   }
@@ -590,18 +619,22 @@ export default class Ui {
     select.name = name
     select.autocomplete = autocomplete
     select.classList = classList
-
     // Hacemos la opción deshabilitada primer hijo del select.
     select.appendChild(disabledOption)
+    this._createOptionElements(select, options)
 
+    return select
+  }
+
+  _createOptionElements (select, options) {
     // Iteramos sobre el array del argumento 'options', creamos y hacemos hijo de select a c/u
-    options.forEach(option => {
+    this._clearHtml(select)
+    options.forEach((option, i) => {
       const html = createElement('option')
-      html.value = option.value
-      html.textContent = option.title
+      html.value = i
+      html.textContent = option
       select.appendChild(html)
     })
-    return select
   }
 
   /**
@@ -609,7 +642,7 @@ export default class Ui {
    * @param {*} data json object with inputsProps
    * @returns {HTMLDivElement} a div.col-md
    */
-  _createFormField (data, options = []) {
+  _createFormField (data, options = [], callback = null) {
     const { label, size } = data
 
     // Vemos si es tipo select, para entonces crear un select y no un input xD
@@ -620,6 +653,9 @@ export default class Ui {
       input = this._createFormInput(data)
     }
 
+    if (callback) {
+      input.addEventListener('change', e => { callback(e) })
+    }
     // Creamos el span, la columna y el group correspondientes
     const span = this._createSpanGroup(label)
     const group = this._createInputGroup(span, input)
@@ -641,10 +677,10 @@ export default class Ui {
   }
 
   /**
-  *
-  * @param {*} props
-  * @returns
-  */
+   *
+   * @param {*} props
+   * @returns
+   */
   _createBtn (props) {
     const { text, type, classList, size } = props
     const btn = createElement('button')

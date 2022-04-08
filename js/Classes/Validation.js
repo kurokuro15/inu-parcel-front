@@ -1,13 +1,16 @@
 import { formToJSON } from '../GlobalSelectors.js'
-import Ui from './Ui.js'
+import Ui from './ui.js'
+// validateSignin
 export default class Validator {
   /**
    * Validación del cuerpo del formulario de registro
    * @param {Event} e evento Submit
+   * @param {function} callback Llamada de vuelta a una función que se ejecutará si la validación resulta.
    */
-  static signinForm (e) {
+  static validateSignin (e, callback) {
     e.preventDefault()
-    this.data = formToJSON(e.target)
+    Validator.ui = new Ui()
+    Validator.data = formToJSON(e.target)
     const today = new Date()
     const {
       birthday,
@@ -26,8 +29,8 @@ export default class Validator {
       state,
       municipality,
       parish
-    } = this.data
-    console.log(this.data)
+    } = Validator.data
+    console.log(Validator.data)
     // validamos que no estén vacíos los requeridos
     if (
       !(
@@ -48,42 +51,87 @@ export default class Validator {
       )
     ) {
       console.log('está vacío')
-      return Ui.printAlert('error', 'Los campos son obligatorios.')
+      return this.ui.printAlert('error', 'Los campos son obligatorios.')
+    }
+
+    // Validamos Username
+    const maxUsernameLength = 12
+    if (Validator._validateField(username, maxUsernameLength)) return
+
+    // Validamos Nombres y apellidos
+    const maxNameLength = 26
+    const refName = Validator._returnTheReference(name)
+    if (Validator._havMaxLength(name, maxNameLength)) {
+      return (
+        true &&
+        this.ui.printAlert('error', `Máximo ${maxNameLength} carácteres en el campo ${refName}`)
+      )
+    }
+
+    const maxLastnameLength = 26
+    const refLastname = Validator._returnTheReference(lastname)
+    if (Validator._havMaxLength(lastname, maxLastnameLength)) {
+      return (
+        true &&
+        this.ui.printAlert('error', `Máximo ${maxLastnameLength} carácteres en el campo ${refLastname}`)
+      )
     }
     // revisar que no hayan espacios en algunos fields
     if (
-      this._havSpace(username) ||
-      this._havSpace(numberHouse) ||
-      this._havSpace(phone) ||
-      this._havSpace(zipcode)
+      Validator._havSpace(username) ||
+      Validator._havSpace(numberHouse) ||
+      Validator._havSpace(phone) ||
+      Validator._havSpace(zipcode)
     ) {
-      return Ui.printAlert(
+      return this.ui.printAlert(
         'error',
         'no puede haber espacios en el campo usuario, contraseña, código postal, teléfono '
       )
     }
+
     // Validamos que la contraseña tenga más de 8 carácteres, minúsculas, mayúsculas y símbolos.
     const passRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
     if (!passRegex.test(password)) {
-      return Ui.printAlert('error', 'Ingrese una contraseña válida')
+      return this.ui.printAlert('error', 'Ingrese una contraseña válida')
     }
 
     // Validamos que la fecha de nacimiento sea válida (no sea mayor al día de hoy)
     if (new Date(birthday) > today) {
-      return Ui.printAlert('error', 'Fecha de nacimiento inválida.')
+      return this.ui.printAlert('error', 'Fecha de nacimiento inválida.')
     }
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/
+
+    // Validamos el correo electrónico
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/
     if (!emailRegex.test(email)) {
-      return Ui.printAlert('error', 'Correo electrónico inválido')
+      return this.ui.printAlert('error', 'Correo electrónico inválido')
     }
-    const phoneRegex = /^\x2b\(?(\d{3})\)?[-]?(\d{3})[-]?(\d{4})$/
+
+    // Validamos el teléfono celular
+    const phoneRegex = /^\x2b(\d{0,3})\(?(\d{3})\)?[-]?(\d{3})[-]?(\d{4})$/
     if (!phoneRegex.test(phone)) {
-      return Ui.printAlert('error', 'Número de teléfono erróneo')
+      return this.ui.printAlert('error', 'Número de teléfono erróneo')
     }
+
+    // Validamos el campo de referencia
+    const maxReferenceLength = 120
+    const refReference = Validator._returnTheReference(reference)
+    if (Validator._havMaxLength(reference, maxReferenceLength)) {
+      return this.ui.printAlert('error', `Máximo ${maxReferenceLength} carácteres en el campo ${refReference}`)
+    }
+    // Si todo pasa entonces:
+    // Guardamos en localstorage el objeto validado.
+    globalThis.localStorage.setItem('signinForm', JSON.stringify(Validator.data))
+    // llamamos a la función que imprimirá la siguiente vista
+    callback()
   }
 
-  _havSpace (string) {
-    if (string.include(' ')) {
+  /**
+   * Verifica si hay espacios en el string que se le pasa como parámetro
+   * @param {string} string
+   * @returns {boolean}
+   */
+  static _havSpace (string) {
+    if (string.includes(' ')) {
       return true
     }
     return false
@@ -95,32 +143,56 @@ export default class Validator {
    * @param {number} maxLength
    * @returns {boolean}
    */
-
-  _havMaxLength (string, maxLength) {
+  static _havMaxLength (string, maxLength) {
     if (string.length >= maxLength) {
       return true
     }
     return false
   }
 
-  _havSymbols (string) {
+  /**
+   * Verifica si hay símbolos en el string que se le pasa como parámetro
+   * @param {string} string
+   * @returns {boolean}
+   */
+  static _havSymbols (string) {
     const regex = /\W+/
     return regex.test(string)
   }
 
-  _validateReferenceField (reference) {
-    const field = this._returnTheReference(reference)
-    const maxLength = 120
-    if (this._havMaxLength(reference, maxLength)) {
-      return Ui.printAlert('error', `Máximo ${maxLength} carácteres en el campo ${field}`)
+  /**
+   * Valida que el campo tenga un máximo de {maxLength} caracteres y no tenga simbolos no admitidos
+   * @param {string} reference
+   * @param {number} maxLength
+   * @returns
+   */
+  static _validateField (reference, maxLength) {
+    const field = Validator._returnTheReference(reference)
+    if (Validator._havMaxLength(reference, maxLength)) {
+      return (
+        true &&
+        this.ui.printAlert('error', `Máximo ${maxLength} carácteres en el campo ${field}`)
+      )
     }
-    if (this._havSymbols(reference)) {
-      return Ui.printAlert('error', `No son admitidos los símbolos en el campo ${field}`)
+    if (Validator._havSymbols(reference)) {
+      return (
+        true &&
+        this.ui.printAlert('error', `No son admitidos los símbolos en el campo ${field}`)
+      )
     }
+    return false
   }
 
-  _returnTheReference (prop) {
-    const name = Object.entries(this.data).filter(e => e.includes(prop)).flat().shift()
+  /**
+   * Retorna el nombre de la propiedad que se esté pasando
+   * @param {string} prop
+   * @returns {string}
+   */
+  static _returnTheReference (prop) {
+    const tObj = Object.entries(this.data)
+      .filter(e => e.includes(prop))
+      .flat()
+    const name = tObj.shift()
     return name
   }
 }

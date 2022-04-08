@@ -62,3 +62,15 @@ export function formToJSON (target) {
     new globalThis.FormData(target)
   )
 }
+
+export async function fetch (url) {
+  const response = await globalThis.fetch(url, { mode: 'no-cors' })
+
+  if (response.ok) { // si el HTTP-status es 200-299
+  // obtener cuerpo de la respuesta (método debajo)
+    const json = await response.json()
+    return json
+  } else {
+    globalThis.alert('Error-HTTP: ' + response.status)
+  }
+}
