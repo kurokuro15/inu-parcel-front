@@ -112,7 +112,7 @@ export default class Validator {
     if (!phoneRegex.test(phone)) {
       return this.ui.printAlert('error', 'Número de teléfono erróneo')
     }
-    const dniRegex = /^[VEJG]-\d{0,3}.\d{0,3}.\d{0,3}/
+    const dniRegex = /^[VvEeJjGg]-\d{0,3}.\d{0,3}.\d{0,3}-?\d{0,1}/
     if (!dniRegex.test(dni)) {
       return this.ui.printAlert('error', 'Número de Cédula erróneo')
     }
