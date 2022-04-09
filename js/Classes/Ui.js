@@ -61,6 +61,20 @@ export default class Ui {
     }, 3000)
   }
 
+  alertInput (type, element) {
+    // Si es de tipo error agrega una clase
+    if (type === 'error') {
+      element.classList.add('border', 'border-danger')
+    } else {
+      element.classList.add('alert-success')
+    }
+
+    // Quitar el alert despues de 3 segundos
+    setTimeout(() => {
+      element.classList.remove('border', 'border-danger')
+    }, 3000)
+  }
+
   /**
    * Crea el cuerpo de la app y presenta el primer paso: ¿Qué envías?
    */

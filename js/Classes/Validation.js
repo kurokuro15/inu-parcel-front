@@ -31,52 +31,52 @@ export default class Validator {
       zipcode
     } = Validator.data
     console.log(Validator.data)
+
     // validamos que no estén vacíos los requeridos
-    if (
-      !(
-        birthday &&
-        country &&
-        dni &&
-        email &&
-        lastname &&
-        municipality &&
-        name &&
-        numberHouse &&
-        parish &&
-        password &&
-        phone &&
-        sex &&
-        state &&
-        street &&
-        username
-      )
+    if (!(birthday &&
+      country &&
+      dni &&
+      email &&
+      lastname &&
+      municipality &&
+      name &&
+      numberHouse &&
+      parish &&
+      password &&
+      phone &&
+      sex &&
+      state &&
+      street &&
+      username)
     ) {
-      console.log('está vacío')
       return this.ui.printAlert('error', 'Los campos son obligatorios.')
     }
 
     // Validamos Username
     const maxUsernameLength = 12
-    if (Validator._validateField(username, maxUsernameLength)) return
+    if (Validator._validateField(username, maxUsernameLength)) {
+      return this.ui.alertInput('error', e.target.querySelector('#username'))
+    }
 
     // Validamos Nombres y apellidos
     const maxNameLength = 26
     const refName = Validator._returnTheReference(name)
     if (Validator._havMaxLength(name, maxNameLength)) {
-      return (
-        true &&
+      return (() => {
         this.ui.printAlert('error', `Máximo ${maxNameLength} carácteres en el campo ${refName}`)
-      )
+        this.ui.alertInput('error', e.target.querySelector('#name'))
+      })()
     }
 
     const maxLastnameLength = 26
     const refLastname = Validator._returnTheReference(lastname)
     if (Validator._havMaxLength(lastname, maxLastnameLength)) {
-      return (
-        true &&
+      return (() => {
         this.ui.printAlert('error', `Máximo ${maxLastnameLength} carácteres en el campo ${refLastname}`)
-      )
+        this.ui.alertInput('error', e.target.querySelector('#lastname'))
+      })()
     }
+
     // revisar que no hayan espacios en algunos fields
     if (
       Validator._havSpace(username) ||
@@ -93,35 +93,55 @@ export default class Validator {
     // Validamos que la contraseña tenga más de 8 carácteres, minúsculas, mayúsculas y símbolos.
     const passRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
     if (!passRegex.test(password)) {
-      return this.ui.printAlert('error', 'Ingrese una contraseña válida')
+      return (() => {
+        this.ui.printAlert('error', 'Ingrese una contraseña válida')
+        this.ui.alertInput('error', e.target.querySelector('#password'))
+      })()
     }
 
     // Validamos que la fecha de nacimiento sea válida (no sea mayor al día de hoy)
     if (new Date(birthday) > today) {
-      return this.ui.printAlert('error', 'Fecha de nacimiento inválida.')
+      return (() => {
+        this.ui.printAlert('error', 'Fecha de nacimiento inválida.')
+        this.ui.alertInput('error', e.target.querySelector('#birthday'))
+      })()
     }
 
     // Validamos el correo electrónico
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/
     if (!emailRegex.test(email)) {
-      return this.ui.printAlert('error', 'Correo electrónico inválido')
+      return (() => {
+        this.ui.printAlert('error', 'Correo electrónico inválido')
+        this.ui.alertInput('error', e.target.querySelector('#email'))
+      })()
     }
 
     // Validamos el teléfono celular
     const phoneRegex = /^\x2b(\d{0,3})\(?(\d{3})\)?[-]?(\d{3})[-]?(\d{4})$/
     if (!phoneRegex.test(phone)) {
-      return this.ui.printAlert('error', 'Número de teléfono erróneo')
+      return (() => {
+        this.ui.printAlert('error', 'Número de teléfono erróneo')
+        this.ui.alertInput('error', e.target.querySelector('#phone'))
+      })()
     }
     const dniRegex = /^[VvEeJjGg]-\d{0,3}.\d{0,3}.\d{0,3}-?\d{0,1}/
     if (!dniRegex.test(dni)) {
-      return this.ui.printAlert('error', 'Número de Cédula erróneo')
+      return (() => {
+        this.ui.printAlert('error', 'Número de Cédula erróneo')
+        this.ui.alertInput('error', e.target.querySelector('#dni'))
+      })()
     }
+
     // Validamos el campo de referencia
     const maxReferenceLength = 120
     const refReference = Validator._returnTheReference(reference)
     if (Validator._havMaxLength(reference, maxReferenceLength)) {
-      return this.ui.printAlert('error', `Máximo ${maxReferenceLength} carácteres en el campo ${refReference}`)
+      return (() => {
+        this.ui.printAlert('error', `Máximo ${maxReferenceLength} carácteres en el campo ${refReference}`)
+        this.ui.alertInput('error', e.target.querySelector('#reference'))
+      })()
     }
+
     // Si todo pasa entonces:
     // Guardamos en localstorage el objeto validado.
     globalThis.localStorage.setItem('signinForm', JSON.stringify(Validator.data))
