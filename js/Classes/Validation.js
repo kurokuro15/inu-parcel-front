@@ -33,21 +33,24 @@ export default class Validator {
     console.log(Validator.data)
 
     // validamos que no estén vacíos los requeridos
-    if (!(birthday &&
-      country &&
-      dni &&
-      email &&
-      lastname &&
-      municipality &&
-      name &&
-      numberHouse &&
-      parish &&
-      password &&
-      phone &&
-      sex &&
-      state &&
-      street &&
-      username)
+    if (
+      !(
+        birthday &&
+        country &&
+        dni &&
+        email &&
+        lastname &&
+        municipality &&
+        name &&
+        numberHouse &&
+        parish &&
+        password &&
+        phone &&
+        sex &&
+        state &&
+        street &&
+        username
+      )
     ) {
       return this.ui.printAlert('error', 'Los campos son obligatorios.')
     }
@@ -63,7 +66,10 @@ export default class Validator {
     const refName = Validator._returnTheReference(name)
     if (Validator._havMaxLength(name, maxNameLength)) {
       return (() => {
-        this.ui.printAlert('error', `Máximo ${maxNameLength} carácteres en el campo ${refName}`)
+        this.ui.printAlert(
+          'error',
+          `Máximo ${maxNameLength} carácteres en el campo ${refName}`
+        )
         this.ui.alertInput('error', e.target.querySelector('#name'))
       })()
     }
@@ -72,7 +78,10 @@ export default class Validator {
     const refLastname = Validator._returnTheReference(lastname)
     if (Validator._havMaxLength(lastname, maxLastnameLength)) {
       return (() => {
-        this.ui.printAlert('error', `Máximo ${maxLastnameLength} carácteres en el campo ${refLastname}`)
+        this.ui.printAlert(
+          'error',
+          `Máximo ${maxLastnameLength} carácteres en el campo ${refLastname}`
+        )
         this.ui.alertInput('error', e.target.querySelector('#lastname'))
       })()
     }
@@ -137,7 +146,10 @@ export default class Validator {
     const refReference = Validator._returnTheReference(reference)
     if (Validator._havMaxLength(reference, maxReferenceLength)) {
       return (() => {
-        this.ui.printAlert('error', `Máximo ${maxReferenceLength} carácteres en el campo ${refReference}`)
+        this.ui.printAlert(
+          'error',
+          `Máximo ${maxReferenceLength} carácteres en el campo ${refReference}`
+        )
         this.ui.alertInput('error', e.target.querySelector('#reference'))
       })()
     }
