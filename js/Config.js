@@ -115,7 +115,17 @@ export default {
       classList: ['form-control'],
       type: 'date',
       autocomplete: 'bday',
-      size: 8
+      size: 5
+    },
+    dni: {
+      label: 'CI/RIF',
+      id: 'dni',
+      name: 'dni',
+      classList: ['form-control'],
+      type: 'text',
+      autocomplete: 'dni',
+      placeholder: 'V-12.345.678',
+      size: 3
     },
     email: {
       label: 'Correo Electrónico',

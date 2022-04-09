@@ -13,40 +13,42 @@ export default class Validator {
     const today = new Date()
     const {
       birthday,
+      country,
+      dni,
       email,
       lastname,
+      municipality,
       name,
       numberHouse,
+      parish,
       password,
       phone,
       reference,
+      sex,
+      state,
       street,
       username,
-      zipcode,
-      sex,
-      country,
-      state,
-      municipality,
-      parish
+      zipcode
     } = Validator.data
     console.log(Validator.data)
     // validamos que no estén vacíos los requeridos
     if (
       !(
+        birthday &&
+        country &&
+        dni &&
         email &&
-        name &&
         lastname &&
+        municipality &&
+        name &&
         numberHouse &&
+        parish &&
         password &&
         phone &&
-        birthday &&
-        username &&
-        street &&
         sex &&
-        country &&
         state &&
-        municipality &&
-        parish
+        street &&
+        username
       )
     ) {
       console.log('está vacío')
@@ -110,7 +112,10 @@ export default class Validator {
     if (!phoneRegex.test(phone)) {
       return this.ui.printAlert('error', 'Número de teléfono erróneo')
     }
-
+    const dniRegex = /^[VEJG]-\d{0,3}.\d{0,3}.\d{0,3}/
+    if (!dniRegex.test(dni)) {
+      return this.ui.printAlert('error', 'Número de Cédula erróneo')
+    }
     // Validamos el campo de referencia
     const maxReferenceLength = 120
     const refReference = Validator._returnTheReference(reference)

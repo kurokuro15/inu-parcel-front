@@ -337,6 +337,7 @@ export default class Ui {
       lastname,
       sex,
       birthday,
+      dni,
       email,
       phone,
       country,
@@ -374,9 +375,9 @@ export default class Ui {
     const lastnameCol = this._createFormField(lastname)
     const sexCol = this._createFormField(sex, sexOp)
     const birthdayCol = this._createFormField(birthday)
-
+    const dniCol = this._createFormField(dni)
     // Componente de Datos Personales
-    const personalComponent = [personalLabel, nameCol, lastnameCol, sexCol, birthdayCol]
+    const personalComponent = [personalLabel, nameCol, lastnameCol, dniCol, sexCol, birthdayCol]
 
     // Sección Contácto
     const contactLabel = this._createCol(12, 'mt-3')

@@ -2,7 +2,6 @@ import { App } from './Classes/App.js'
 
 const app = new App()
 app.init()
-
 // async function allState () {
 //   const response = await fetch('https://apimocha.com/kurokuro15/states')
 //   return response.map(element => element.estado)
