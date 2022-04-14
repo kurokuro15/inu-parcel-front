@@ -1,25 +1,15 @@
 import config from '../Config.js'
-import Validator from './Validation.js'
-import {
-  container,
-  createElement,
-  insertDataObj,
-  dataObjParcel,
-  resetDataObj,
-  selecter,
-  validationDataObj
-} from '../GlobalSelectors.js'
-import Parcel from './Parcel.js'
-import conection from './Conection.js'
+import { container, createElement, selecter } from '../GlobalSelectors.js'
 export default class Ui {
   constructor () {
     this.config = config
   }
 
   /**
-   * Crea la cabecera de la app.
+   * Crea la cabecera de la app. antes del div.main, dentro del container principal
    */
-  header (title = 'Cotizador de envíos') {
+  _header (title = '') {
+    this._clearHtml(container)
     const headerText = createElement('h1')
     headerText.textContent = title
     headerText.classList.add('title', 'text-center', 'my-2', 'text-uppercase')
@@ -32,6 +22,9 @@ export default class Ui {
     container.appendChild(hr)
   }
 
+  /**
+   * Crea una alerta dentro del contenedor principal, antes del Div.mains
+   */
   printAlert (type, messange) {
     // XD ya el time y la cabeza no me dan para refactorizar estas cosas :v Por ahora
     if (selecter('div.alert')) {
@@ -61,6 +54,9 @@ export default class Ui {
     }, 3000)
   }
 
+  /**
+   * Cambia por 3 segundos el borde de un input o elemento que se pase como argumento
+   */
   alertInput (type, element) {
     // Si es de tipo error agrega una clase
     if (type === 'error') {
@@ -76,420 +72,18 @@ export default class Ui {
   }
 
   /**
-   * Crea el cuerpo de la app y presenta el primer paso: ¿Qué envías?
+   * Crea el Div.main
    */
   main () {
+    this._header('Texto del título')
     this.mainElement = createElement('main')
     this.mainElement.classList.add('my-3', 'text-center')
     container.appendChild(this.mainElement)
 
     // Esto verifica que no exista ya un formulario.
     if (!document.querySelector('form')) {
-      this.signinSection()
+      console.log('este main no está sobreescrito, revise.')
     }
-  }
-
-  /**
-   * Crea la vista de ¿Qué envías? pidiendo el tipo, el valor, dimensiones y peso del producto
-   */
-  whatSend () {
-    // Limpiamos por si las moscas
-    this._clearHtml(this.mainElement)
-
-    const { productsType } = this.config
-
-    // Creamos el título de la vista.
-    this._subtitleCreate('¿Qué envías?')
-
-    // Creamos el formulario que contendrá la vista.
-    const form = createElement('form')
-    form.classList = 'row align-items-center justify-content-center g-3 m-2 pb-3'
-
-    // Preparamos las opciones de encomiendas
-    const options = productsType
-      .map(productType => {
-        const { type } = productType
-        return `<option value="${type}">${type}</option>`
-      })
-      .join('')
-
-    // Como es 'mucho texto' creamos un string con el contenido HTML del select
-    const select = `
-    <div class="col-md-6">
-      <div class="input-group input-group-lg">
-      <span class="input-group-text">Tipo</span>
-      <select name="type" id='type' class="form-select">
-      <option selected disabled>Tipo de encomienda</option>
-      ${options}
-      </select>
-      </div>
-    </div>
-    `
-
-    // Un poco de lo mismo but, con el input que tendrá el valor de la encomienda
-    const valueInput = `
-    <div class="col-md-6">
-      <div class="input-group input-group-lg">
-        <span class="input-group-text">Valor</span>
-        <input id="value" class="form-control text-end" type="text" placeholder="0.00"/>
-        <span class="input-group-text">U$D</span>
-      </div>
-    </div>
-    `
-
-    // Se define los tres inputs de las dimensiones, alto por ancho por alto
-    const dimensionInput = `
-    <div class="col-md-8">
-      <div class="input-group input-group-lg">
-        <span class="input-group-text">Dimensión (LxWxH)</span>
-        <input
-          id="length"
-          class="form-control text-center"
-          type="text"
-          placeholder="0.00"
-        />
-        <input
-          id="width"
-          class="form-control text-center"
-          type="text"
-          placeholder="0.00"
-        />
-        <input
-          id="high"
-          class="form-control text-center"
-          type="text"
-          placeholder="0.00"
-        />
-        <span class="input-group-text">CM</span>
-      </div>
-    </div>
-    `
-
-    // Más de lo mismo, con el input de peso
-    const weight = `
-    <div class="col-md-4">
-      <div class="input-group input-group-lg">
-        <span class="input-group-text">Peso</span>
-        <input id="weight" class="form-control" type="text" placeholder="0.00" />
-        <span class="input-group-text">Kgrs</span>
-      </div>
-    </div>
-    `
-
-    // Botoncito
-    const button = `
-    <button class="btn btn-primary col-md-2" type ="submit">siguiente</button>
-    `
-
-    // Introducimos todo el texto como html al formulario y el formulario al marco principal
-    form.innerHTML = `${select}${valueInput}${dimensionInput}${weight}${button}`
-    this.mainElement.appendChild(form)
-
-    // Añadimos parcelData como escucha del evento change a cada input para ir almacenando y
-    // al hacer submit validar la información
-    selecter('#type').addEventListener('change', insertDataObj)
-    selecter('#value').addEventListener('change', insertDataObj)
-    selecter('#length').addEventListener('change', insertDataObj)
-    selecter('#width').addEventListener('change', insertDataObj)
-    selecter('#high').addEventListener('change', insertDataObj)
-    selecter('#weight').addEventListener('change', insertDataObj)
-    form.addEventListener('submit', e => {
-      const messange = validationDataObj(e)
-      if (messange) {
-        if (messange === 'success') {
-          return this.whereSend()
-        }
-        this.printAlert('error', messange)
-      }
-    })
-  }
-
-  /**
-   * Crea la vista de ¿desde donde envías? pidiendo la dirección emisora del paquete
-   */
-  whereSend () {
-    this._clearHtml(this.mainElement)
-
-    // Creamos el título de la vista.
-    this._subtitleCreate(this.mainElement, '¿A donde envías?')
-
-    // Creamos el formulario que contendrá la vista.
-    const form = createElement('form')
-    form.classList = 'row align-items-center g-3 m-2 pb-3 justify-content-center'
-
-    // Traemos el selector de direcciones y lo metemos en el form...
-    form.innerHTML = `
-    <div class="col-auto ">
-      <div class="input-group input-group-lg">
-      <span class="input-group-text">Destinatario</span>
-      </div>
-    </div>
-    `
-
-    // Generamos el select de direcciones para 'from'
-    const address = this._addressSelector()
-    address.id = 'receivingAddress'
-    address.addEventListener('change', e => {
-      insertDataObj(e)
-      this.fromWhere(this.mainElement)
-    })
-
-    // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
-    form.firstElementChild.firstElementChild.appendChild(address)
-    this.mainElement.appendChild(form)
-  }
-
-  /**
-   * Crea la vista de ¿hacia donde envías? pidiendo la dirección receptora del paquete
-   */
-  fromWhere () {
-    this._clearHtml(this.mainElement)
-
-    // Creamos el título de la vista.
-    this._subtitleCreate(this.mainElement, '¿Desde donde envías?')
-
-    // Creamos el formulario que contendrá la vista.
-    const form = createElement('form')
-    form.classList = 'row align-items-center g-3 m-2 pb-3 justify-content-center'
-
-    // Traemos el selector de direcciones y lo metemos en el form...
-    form.innerHTML = `
-    <div class="col-auto ">
-      <div class="input-group input-group-lg">
-      <span class="input-group-text">Remitente</span>
-      </div>
-    </div>
-    `
-
-    // Generamos el select de direcciones para 'to'
-    const address = this._addressSelector()
-    address.id = 'senderAddress'
-    address.addEventListener('change', e => {
-      insertDataObj(e)
-      this.shippingDetail(this.mainElement)
-    })
-
-    // Un poco chapuza puede ser. Pero para no estar escribiendo tanto... :'u
-    form.firstElementChild.firstElementChild.appendChild(address)
-    this.mainElement.appendChild(form)
-  }
-
-  /**
-   * Crea la vista de Tarifa de envío mostrando la tarifa y preguntando si quiere seguro
-   *  La tarifa incluye: Precio del envío, tiempo estimado, distancia recorrida
-   *  Se permite la opción de no asegurar
-   */
-  shippingDetail () {
-    this._clearHtml(this.mainElement)
-    // Traemos la clase Parcel y hacemos una instancia.
-    const parcel = new Parcel(dataObjParcel)
-
-    // llamamos al método que nos devuelve los cálculos :D
-    const presupuesto = parcel.getParcel()
-
-    const { raw, tax, amount, origin, destiny, distance, time, distanceUnit, timeUnit } =
-      presupuesto
-
-    const article = createElement('article')
-    article.classList.add('row', 'justify-content-center')
-    article.innerHTML = `
-    <div class="col-md-6">
-      <div class="card">
-        <h2 class="card-header border-success">Tarifa propuesta</h2>
-          <table class="table table-borderless table-sm m-0 p-0">
-            <tbody>
-              <tr>
-                <th>Precio neto:</th>
-                <td>${raw}U$D</td>
-              </tr>
-              <tr>
-                <th>IVA:</th>
-                <td>${tax}U$D</td>
-              </tr>
-              <tr>
-                <th>Total:</th>
-                <td class="fw-bold">${amount}U$D</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class='border-top'>
-            <section class="card-group justify-content-around pt-2">
-              <p>${origin}</p>
-              <div>
-                <span class="material-icons">double_arrow</span>
-                <span class="material-icons-outlined">local_shipping</span>
-                <span class="material-icons">double_arrow</span>
-              </div>
-              <p>${destiny}</p>
-            </section>
-            <section class="card-group justify-content-center">
-              <p>${distance} ${distanceUnit}</p>
-            </section>
-            <section class="card-group justify-content-center">
-            <span class="material-icons-outlined">watch_later</span>
-            <p>${time} ${timeUnit}</p>
-            </section>
-            <button class="btn btn-primary m-2">Nueva encomienda</button>
-          </div>
-      </div>
-    </div>
-    `
-
-    this.mainElement.appendChild(article)
-
-    selecter('button.btn').addEventListener('click', () => {
-      resetDataObj()
-      this.whatSend()
-    })
-  }
-
-  async signinSection () {
-    const {
-      user,
-      newPass,
-      name,
-      lastname,
-      sex,
-      birthday,
-      dni,
-      email,
-      phone,
-      country,
-      state,
-      municipality,
-      parish,
-      zipcode,
-      numberHouse,
-      street,
-      reference
-    } = this.config.inputsProps
-
-    const sexOp = [
-      'Femenino',
-      'Masculino',
-      'Otro'
-    ]
-
-    // Se crea el sub-titulo
-    this._subtitleCreate('Registro')
-
-    // Sección Usuario y contraseña
-    const userCol = this._createFormField(user)
-    const passCol = this._createFormField(newPass)
-
-    // Componente de User
-    const userComponent = [userCol, passCol]
-
-    // Sección Datos personales
-    const personalLabel = this._createCol(12, 'mt-3')
-    personalLabel.appendChild(this._createFormLabel('Datos Personales'))
-
-    // Fields
-    const nameCol = this._createFormField(name)
-    const lastnameCol = this._createFormField(lastname)
-    const sexCol = this._createFormField(sex, sexOp)
-    const birthdayCol = this._createFormField(birthday)
-    const dniCol = this._createFormField(dni)
-    // Componente de Datos Personales
-    const personalComponent = [personalLabel, nameCol, lastnameCol, dniCol, sexCol, birthdayCol]
-
-    // Sección Contácto
-    const contactLabel = this._createCol(12, 'mt-3')
-    contactLabel.appendChild(this._createFormLabel('Datos de contacto'))
-
-    // Fields
-    const emailCol = this._createFormField(email)
-    const phoneCol = this._createFormField(phone)
-
-    // Componente de Contacto
-    const contactComponent = [contactLabel, emailCol, phoneCol]
-
-    // Sección Dirección
-    const addressLabel = this._createCol(12, 'mt-3')
-    addressLabel.appendChild(this._createFormLabel('Dirección'))
-
-    // Fields
-    const parishCol = this._createFormField(parish)
-
-    const municipalityCol = this._createFormField(municipality, [], async (e) => {
-      const array = await conection.getParishes(e.target.value)
-      const selector = parishCol.querySelector('select')
-      this._createOptionElements(
-        selector,
-        array
-      )
-    })
-
-    const stateCol = this._createFormField(state, await conection.getStates(), async (e) => {
-      // Almacenamos el select de municipio y definimos la primera opción como seleccionada.
-      const selector = municipalityCol.querySelector('select')
-      selector.firstElementChild.selected = true
-      // Almacenamos el select de parroquia y definimos la primera opción como seleccionada.
-      const parish = parishCol.querySelector('select')
-      parish.firstElementChild.selected = true
-      this._clearHtml(selector)
-      this._clearHtml(parish)
-      const array = await conection.getMunicipalities(e.target.value)
-      this._createOptionElements(
-        selector,
-        array
-      )
-    })
-
-    const countryCol = this._createFormField(country, ['Venezuela'])
-    const zipCol = this._createFormField(zipcode)
-    const numberCol = this._createFormField(numberHouse)
-    const streetCol = this._createFormField(street)
-    const referenceCol = this._createFormField(reference)
-
-    // Componente de dirección
-    const addressComponents = [
-      addressLabel,
-      countryCol,
-      stateCol,
-      municipalityCol,
-      parishCol,
-      zipCol,
-      numberCol,
-      streetCol,
-      referenceCol
-    ]
-
-    // Botones :D
-    const btnDiv = createElement('div')
-    btnDiv.classList.add('row', 'p-3', 'mt-4', 'justify-content-between')
-    const backBtn = this._createBtn({
-      classList: ['btn', 'btn-primary'],
-      size: '4',
-      text: 'Atrás',
-      type: 'reset'
-    })
-    btnDiv.appendChild(backBtn)
-    const signinBtn = this._createBtn({
-      classList: ['btn', 'btn-success'],
-      size: '4',
-      text: 'Registrarme',
-      type: 'submit'
-    })
-    btnDiv.appendChild(signinBtn)
-
-    // Se crea un arreglo con las clases extras de este form y el form en cuestión
-    const formComponents = [
-      ...userComponent,
-      ...personalComponent,
-      ...contactComponent,
-      ...addressComponents,
-      btnDiv
-    ]
-    const formClasses = ['mx-5', 'p-2']
-    const form = this._formCreate(formClasses, ...formComponents)
-    form.addEventListener('submit', e => {
-      Validator.validateSignin(e, () => {
-        this.whatSend()
-      })
-    })
-    // Se mete el form al container principal, aunque creo debo meterlo en el main ...
-    this.mainElement.appendChild(form)
   }
 
   /**
@@ -499,7 +93,7 @@ export default class Ui {
     while (parent.firstChild !== parent.lastChild) {
       parent.removeChild(parent.lastChild)
     }
-    if (parent.type !== 'select-one') {
+    if (parent.type !== 'select-one' && parent.firstChild) {
       parent.removeChild(parent.firstChild)
     }
   }
@@ -604,7 +198,7 @@ export default class Ui {
 
   /**
    * Create an HTMLInputElemnt with object of data pass
-   * @param {*} inputsProps Is an object with necesary data for create an input element
+   * @param {object} inputsProps Is an object with necesary data for create an input element
    * @returns {HTMLInputElement} with features that passed param
    */
   _createFormInput ({
@@ -625,6 +219,12 @@ export default class Ui {
     return input
   }
 
+  /**
+   * Create an HTMLInputElemnt with object of data pass
+   * @param {object} inputsProps Object with props of the select element
+   * @param {HTMLOptionsCollection} options Collection of HTMLOptionElement from put in select
+   * @returns {HTMLSelectElement} HTMLSelectElement that have all options that give from args.
+   */
   _createFormSelector (
     { id, name = '', autocomplete = '', classList = ['form-select'], defaultOption },
     options
@@ -676,7 +276,9 @@ export default class Ui {
     }
 
     if (callback) {
-      input.addEventListener('change', e => { callback(e) })
+      input.addEventListener('change', e => {
+        callback(e)
+      })
     }
     // Creamos el span, la columna y el group correspondientes
     const span = this._createSpanGroup(label)
