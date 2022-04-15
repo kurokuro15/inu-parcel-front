@@ -1,11 +1,11 @@
-import config from '../Config.js'
+import Config from '../Config.js'
 export default class Parcel {
   constructor ({ value, length, width, high, weight, type, senderAddress, receivingAddress }) {
     this.value = value
     this.dimensions = { length, width, high }
     this.weight = weight
     this.type = type
-    this.config = config
+    this.config = Config
     // Tengo acá un problema. Debo parsear el ID de las direcciones.. Creo que Con Number se resuelve :V.
     ;[this.senderAddress] = this.config.addresses.filter(ad => ad.id === Number(senderAddress))
     ;[this.receivingAddress] = this.config.addresses.filter(

@@ -1,8 +1,8 @@
-import config from '../Config.js'
+import Config from '../Config.js'
 import { container, createElement, selecter } from '../GlobalSelectors.js'
 export default class Ui {
   constructor () {
-    this.config = config
+    this.config = Config
   }
 
   /**
@@ -314,5 +314,50 @@ export default class Ui {
     const col = this._createCol(size)
     col.appendChild(btn)
     return col
+  }
+
+  _createItem (text, url = '#', classes = []) {
+    const li = createElement('li')
+    li.classList.add('nav-item')
+    if (classes.length > 0) {
+      li.classList.add(classes)
+    }
+
+    const a = createElement('a')
+    a.classList.add('h6', 'nav-link')
+    a.href = url
+    if (typeof text === 'string') {
+      a.textContent = text
+    } else if (text.tagName === 'SPAN') {
+      a.appendChild(text)
+    }
+
+    li.appendChild(a)
+    return li
+  }
+
+  _createItemList (classes = [], ...items) {
+    const ul = createElement('ul')
+    ul.classList.add('navbar-nav', 'mb-2')
+    if (classes.length > 0) {
+      ul.classList.add(classes)
+    }
+
+    items.forEach(item => {
+      ul.appendChild(item)
+    })
+    return ul
+  }
+
+  _createNavBarBrand (src, width, url = '#') {
+    const img = createElement('img')
+    img.src = src
+    img.alt = 'logo'
+    img.width = width
+    const a = createElement('a')
+    a.classList.add('navbar-brand')
+    a.href = url
+    a.appendChild(img)
+    return a
   }
 }

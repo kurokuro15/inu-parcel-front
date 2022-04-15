@@ -1,6 +1,6 @@
-import config from '../Config.js'
+import Config from '../Config.js'
 import { fetch } from '../GlobalSelectors.js'
-const { path: URL } = config
+const { path: URL } = Config
 
 class Conection {
   constructor (url) {
