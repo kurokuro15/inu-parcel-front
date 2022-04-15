@@ -1,6 +1,10 @@
-export default {
+
+const Config = {
   path: '/venezuela.json',
   URL: 'https://apimocha.com/kurokuro15/states',
+  assets: {
+    logo: './assets/logo.png'
+  },
   productsType: [
     {
       type: 'Paquete',
@@ -228,3 +232,4 @@ export default {
     }
   }
 }
+export default Config

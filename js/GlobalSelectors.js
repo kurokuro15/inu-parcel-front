@@ -4,6 +4,7 @@
 // export const sesion = globalThis.localStorage.getItem('sesion') || {}
 
 // Selectors
+export const containerNavbar = globalThis.document.querySelector('div.container-navbar')
 export const container = globalThis.document.querySelector('div.container')
 export const selecter = selector => globalThis.document.querySelector(selector)
 // Functions

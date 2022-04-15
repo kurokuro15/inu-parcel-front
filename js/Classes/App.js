@@ -1,13 +1,19 @@
 import Ui from './Ui.js'
+import ParcelUi from './ParcelUi.js'
+import SignInUi from './SignInUi.js'
+import NavbarUi from './NavbarUi.js'
 export class App {
   constructor () {
     this.ui = new Ui()
+    this.navbar = new NavbarUi()
+    this.parcelUi = new ParcelUi()
+    this.signInUi = new SignInUi()
   }
 
   init () {
     // acá puedo indicar si está la sesión iniciada o en caso contrario no se ha registrado/iniciado sesión.
-    this.ui.header()
-    this.ui.main()
+    this.navbar.navbar()
+    this.parcelUi.main()
     console.log('iniciando app...')
   }
 }
