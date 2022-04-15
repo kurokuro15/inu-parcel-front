@@ -13,7 +13,15 @@ export class App {
   init () {
     // acá puedo indicar si está la sesión iniciada o en caso contrario no se ha registrado/iniciado sesión.
     this.navbar.navbar()
-    this.parcelUi.main()
+    this.toParcel()
     console.log('iniciando app...')
+  }
+
+  toParcel () {
+    this.parcelUi.main()
+  }
+
+  tosignIn () {
+    this.signInUi.main()
   }
 }
