@@ -2,7 +2,7 @@ import { formToJSON, fetch, localStorage } from '../GlobalSelectors.js'
 import Validator from './Validation.js'
 import Config from '../Config.js'
 import Ui from './Ui.js'
-import { App } from './App.js'
+import app from '../main.js'
 export default class Login {
   constructor (event) {
     // prevenimos el evento por defecto y leemos el formulario creando un Json del mismo
@@ -15,7 +15,6 @@ export default class Login {
     if (this._validateForm()) {
       this._fetchAuth(this.data).then(res => {
         if (res) {
-          const app = new App()
           app.logon()
         }
       })
