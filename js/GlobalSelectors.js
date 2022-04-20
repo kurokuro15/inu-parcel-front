@@ -6,7 +6,7 @@ export const localStorage = globalThis.localStorage
 // Selectors
 export const containerNavbar = globalThis.document.querySelector('div.container-navbar')
 export const container = globalThis.document.querySelector('div.container')
-export const selecter = selector => globalThis.document.querySelector(selector)
+export const selecter = (selector = '') => globalThis.document.querySelector(selector)
 // Functions
 export const createElement = element => globalThis.document.createElement(element)
 
