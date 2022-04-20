@@ -1,7 +1,7 @@
 import Config from '../Config.js'
 import { fetch } from '../GlobalSelectors.js'
 const { path: URL } = Config
-
+// ME DOY CUENTA QUE ESTE CONECTION SOLO VALE PARA LEER EL JSON :D
 class Conection {
   constructor (url) {
     this.url = url
