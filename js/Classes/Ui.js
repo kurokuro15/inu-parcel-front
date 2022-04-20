@@ -46,7 +46,7 @@ export default class Ui {
     divMessange.textContent = messange
 
     // Insertar en el DOM
-    container.insertBefore(divMessange, document.querySelector('main'))
+    container.insertBefore(divMessange, selecter('main'))
 
     // Quitar el alert despues de 3 segundos
     setTimeout(() => {
@@ -233,6 +233,7 @@ export default class Ui {
     const disabledOption = createElement('option')
     disabledOption.disabled = true
     disabledOption.selected = true
+    disabledOption.value = false
     disabledOption.textContent = defaultOption
 
     // Creamos el select y le damos las props que se pasan
@@ -253,7 +254,7 @@ export default class Ui {
     this._clearHtml(select)
     options.forEach((option, i) => {
       const html = createElement('option')
-      html.value = i
+      html.value = i + 1
       html.textContent = option
       select.appendChild(html)
     })
