@@ -1,7 +1,7 @@
 // Acá estarán ubicados selectores para usar globalmente y funciones que requieren del dom
 
-// LocalStorage save
-// export const sesion = globalThis.localStorage.getItem('sesion') || {}
+// localStorage class
+export const localStorage = globalThis.localStorage
 
 // Selectors
 export const containerNavbar = globalThis.document.querySelector('div.container-navbar')
@@ -28,22 +28,21 @@ export function insertDataObj (e) {
 export function validationDataObj (e) {
   e.preventDefault()
   const montReg = /\d+\.?\d*/
-  const { value, length, width, high, weight, type } =
-    dataObjParcel
-  if (
-    !value ||
-    !length ||
-    !width ||
-    !high ||
-    !weight ||
-    !type
-  ) {
+  const { value, length, width, high, weight, type } = dataObjParcel
+  if (!value || !length || !width || !high || !weight || !type) {
     return 'Todos los campos son requeridos.'
   }
   if (isNaN(value) || !montReg.test(value)) {
     return 'Ingrese un monto válido'
   }
-  if ((isNaN(length) || isNaN(width) || isNaN(high)) || (!montReg.test(length) || !montReg.test(width) || !montReg.test(high))) {
+  if (
+    isNaN(length) ||
+    isNaN(width) ||
+    isNaN(high) ||
+    !montReg.test(length) ||
+    !montReg.test(width) ||
+    !montReg.test(high)
+  ) {
     return 'Ingrese una medida válida'
   }
   if (isNaN(weight) || !montReg.test(weight)) {
@@ -59,19 +58,16 @@ export function resetDataObj () {
 }
 
 export function formToJSON (target) {
-  return Object.fromEntries(
-    new globalThis.FormData(target)
-  )
+  return Object.fromEntries(new globalThis.FormData(target))
 }
 
-export async function fetch (url) {
-  const response = await globalThis.fetch(url, { mode: 'no-cors' })
+export async function fetch (url = '', init = {}) {
+  const response = await globalThis.fetch(url, init)
 
-  if (response.ok) { // si el HTTP-status es 200-299
-  // obtener cuerpo de la respuesta (método debajo)
+  if (response) {
+    // si el HTTP-status es 200-299
+    // obtener cuerpo de la respuesta (método debajo)
     const json = await response.json()
     return json
-  } else {
-    globalThis.alert('Error-HTTP: ' + response.status)
   }
 }

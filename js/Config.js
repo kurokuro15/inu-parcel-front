@@ -1,6 +1,7 @@
 
 const Config = {
   path: '/venezuela.json',
+  apiUrl: 'http://localhost/api-rest/',
   URL: 'https://apimocha.com/kurokuro15/states',
   assets: {
     logo: './assets/logo.png'

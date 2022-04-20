@@ -1,6 +1,10 @@
 import { formToJSON } from '../GlobalSelectors.js'
 import Ui from './Ui.js'
 export default class Validator {
+  constructor () {
+    Validator.ui = this.ui = new Ui()
+  }
+
   /**
    * Validación del cuerpo del formulario de registro
    * @param {Event} e evento Submit
@@ -30,7 +34,7 @@ export default class Validator {
       username,
       zipcode
     } = Validator.data
-    console.log(Validator.data)
+    // console.log(Validator.data)
 
     // validamos que no estén vacíos los requeridos
     if (
@@ -180,9 +184,11 @@ export default class Validator {
    * @returns {boolean}
    */
   static _havMaxLength (string, maxLength) {
-    if (string.length >= maxLength) {
+    if (string.length > maxLength) {
+      console.log(string)
       return true
     }
+
     return false
   }
 
@@ -202,19 +208,15 @@ export default class Validator {
    * @param {number} maxLength
    * @returns
    */
-  static _validateField (reference, maxLength) {
-    const field = Validator._returnTheReference(reference)
+  static _validateField (reference, maxLength, data) {
+    const field = Validator._returnTheReference(reference, data)
     if (Validator._havMaxLength(reference, maxLength)) {
-      return (
-        true &&
-        this.ui.printAlert('error', `Máximo ${maxLength} carácteres en el campo ${field}`)
-      )
+      this.ui.printAlert('error', `Máximo ${maxLength} carácteres en el campo ${field}`)
+      return true
     }
     if (Validator._havSymbols(reference)) {
-      return (
-        true &&
-        this.ui.printAlert('error', `No son admitidos los símbolos en el campo ${field}`)
-      )
+      this.ui.printAlert('error', `No son admitidos los símbolos en el campo ${field}`)
+      return true
     }
     return false
   }
@@ -224,11 +226,40 @@ export default class Validator {
    * @param {string} prop
    * @returns {string}
    */
-  static _returnTheReference (prop) {
-    const tObj = Object.entries(this.data)
+  static _returnTheReference (prop, data = this.data) {
+    const tObj = Object.entries(data)
       .filter(e => e.includes(prop))
       .flat()
     const name = tObj.shift()
     return name
+  }
+
+  validateUser (username, e, data) {
+    const maxUsernameLength = 12
+    // Validamos Username
+    if (!username) {
+      this.ui.alertInput('error', e)
+      this.ui.printAlert('error', 'Ingrese un usuario válido')
+      return true
+    } else if (Validator._validateField(username, maxUsernameLength, data)) {
+      this.ui.alertInput('error', e)
+      return true
+    } else {
+      this.ui.alertInput('success', e)
+      return false
+    }
+  }
+
+  validatePassword (password, e) {
+    // Validamos que la contraseña tenga más de 8 carácteres, minúsculas, mayúsculas y símbolos.
+    const passRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
+    if (!passRegex.test(password)) {
+      this.ui.printAlert('error', 'Ingrese una contraseña válida')
+      this.ui.alertInput('error', e)
+      return true
+    } else {
+      this.ui.alertInput('success', e)
+      return false
+    }
   }
 }
