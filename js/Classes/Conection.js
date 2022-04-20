@@ -16,14 +16,14 @@ class Conection {
   }
 
   async getMunicipalities (state = 0) {
-    this.state = state
+    this.state = state - 1
     const response = await fetch(this.url)
-    return response[state].municipios.map(mun => mun.municipio)
+    return response[this.state].municipios.map(mun => mun.municipio)
   }
 
   async getParishes (parish = 0) {
     const response = await fetch(this.url)
-    return response[this.state].municipios[parish].parroquias
+    return response[this.state].municipios[parish - 1].parroquias
   }
 }
 

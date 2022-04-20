@@ -230,6 +230,40 @@ const Config = {
       placeholder: 'Al lado del Mc. Pollo',
       autocomplete: 'address-line2',
       size: 6
+    },
+    iquestionOne: {
+      label: 'Primera pregunta',
+      id: 'questionOne',
+      name: 'questionOne',
+      classList: ['form-select'],
+      defaultOption: 'Selecciona...',
+      type: 'select',
+      size: 6
+    },
+    ianswerOne: {
+      label: 'Respuesta',
+      id: 'answerOne',
+      name: 'answerOne',
+      classList: ['form-control'],
+      type: 'text',
+      size: 6
+    },
+    iquestionTwo: {
+      label: 'Segunda pregunta',
+      id: 'questionTwo',
+      name: 'questionTwo',
+      classList: ['form-select'],
+      defaultOption: 'Selecciona...',
+      type: 'select',
+      size: 6
+    },
+    ianswerTwo: {
+      label: 'Respuesta',
+      id: 'answerTwo',
+      name: 'answerTwo',
+      classList: ['form-control'],
+      type: 'text',
+      size: 6
     }
   }
 }
