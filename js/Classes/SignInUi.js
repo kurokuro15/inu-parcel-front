@@ -1,7 +1,7 @@
 import Ui from './Ui.js'
-import Validator from './Validation.js'
 import { container, createElement } from '../GlobalSelectors.js'
 import conection from './Conection.js'
+import SignIn from './Signin.js'
 export default class SignInUi extends Ui {
   /**
    * Crea el Div.main
@@ -39,7 +39,11 @@ export default class SignInUi extends Ui {
       zipcode,
       numberHouse,
       street,
-      reference
+      reference,
+      iquestionOne,
+      ianswerOne,
+      iquestionTwo,
+      ianswerTwo
     } = this.config.inputsProps
 
     const sexOp = ['Femenino', 'Masculino', 'Otro']
@@ -136,6 +140,33 @@ export default class SignInUi extends Ui {
       referenceCol
     ]
 
+    // Sección de Preguntas de Seguridad :D
+    const questionLabel = this._createCol(12, 'mt-3')
+    questionLabel.appendChild(this._createFormLabel('Preguntas de Seguridad'))
+
+    // Fields
+    // Fetch de las preguntas existentes string
+    const questionOp = [
+      'Nombre de tú mamá',
+      'Lugar de nacimiento de tu perrito',
+      'De que color es el caballo blanco de Simón Bolivar'
+    ]
+    // Select de pregunta 1
+    const questionOne = this._createFormField(iquestionOne, questionOp)
+    // Input de pregunta 1
+    const answerOne = this._createFormField(ianswerOne)
+    // Select de pregunta 2
+    const questionTwo = this._createFormField(iquestionTwo, questionOp)
+    // Input de pregunta 2
+    const answerTwo = this._createFormField(ianswerTwo)
+
+    const securityComponents = [
+      questionLabel,
+      questionOne,
+      answerOne,
+      questionTwo,
+      answerTwo
+    ]
     // Botones :D
     const btnDiv = createElement('div')
     btnDiv.classList.add('row', 'p-3', 'mt-4', 'justify-content-between')
@@ -161,14 +192,17 @@ export default class SignInUi extends Ui {
       ...personalComponent,
       ...contactComponent,
       ...addressComponents,
+      ...securityComponents,
       btnDiv
     ]
     const formClasses = ['sign-in', 'mx-5', 'p-2']
     const form = this._formCreate(formClasses, ...formComponents)
     form.addEventListener('submit', e => {
-      Validator.validateSignin(e, () => {
-        this.whatSend()
-      })
+      const signin = new SignIn(e)
+      signin.signin()
+      // Validator.validateSignin(e, () => {
+      //   this.whatSend()
+      // })
     })
     // Se mete el form al container principal, aunque creo debo meterlo en el main ...
     this.mainElement.appendChild(form)
