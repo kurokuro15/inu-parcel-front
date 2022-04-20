@@ -2,13 +2,23 @@ import Ui from './Ui.js'
 import { containerNavbar, createElement } from '../GlobalSelectors.js'
 import config from '../Config.js'
 export default class NavbarUi extends Ui {
+  /**
+   * Crea el Div.main
+   */
+  main () {
+    // Esto verifica que no exista ya un formulario.
+    if (!document.querySelector('nav.navbar')) {
+      this.navbar()
+    }
+  }
+
   navbar () {
     this.logo = config.assets.logo
     // Creamos el logo
     const brand = this._createNavBarBrand(this.logo, 50, '/')
     // Creamos los items de la lista desordenada de la izquierda
     const cot = this._createItem('Cotizador', 'javascript:app.toParcel();', 'mx-3')
-    const trak = this._createItem('Tracking', 'javascript:app.toTracking()', 'mx-3')
+    const trak = this._createItem('Tracking', 'javascript:app.toTracking();', 'mx-3')
     const leftUl = this._createItemList('me-auto', cot, trak)
     // Creamos los items y la segunda lista desordenada, de la derecha
     const logout = createElement('span')
@@ -17,8 +27,8 @@ export default class NavbarUi extends Ui {
     const account = createElement('span')
     account.classList = 'material-icons-outlined'
     account.textContent = 'manage_accounts'
-    const out = this._createItem(logout, 'javascript:app.logout()')
-    const acc = this._createItem(account, 'javascript:app.tosignIn()')
+    const out = this._createItem(logout, 'javascript:app.logout();')
+    const acc = this._createItem(account, 'javascript:app.tosignIn();')
     const rightUl = this._createItemList([], acc, out)
     // Creamos un contenedor para limitar los elementos dentro de este
     const div = createElement('div')
