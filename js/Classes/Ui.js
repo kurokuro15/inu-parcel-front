@@ -61,13 +61,13 @@ export default class Ui {
     // Si es de tipo error agrega una clase
     if (type === 'error') {
       element.classList.add('border', 'border-danger')
-    } else {
-      element.classList.add('alert-success')
+    } else if (type === 'success') {
+      element.classList.add('border', 'border-success')
     }
 
     // Quitar el alert despues de 3 segundos
     setTimeout(() => {
-      element.classList.remove('border', 'border-danger')
+      element.classList.remove('border', 'border-danger', 'border-success')
     }, 3000)
   }
 
@@ -306,8 +306,14 @@ export default class Ui {
    * @returns
    */
   _createBtn (props) {
-    const { text, type, classList, size } = props
-    const btn = createElement('button')
+    const { text, type, classList, size, href } = props
+    let btn
+    if (type === 'submit') {
+      btn = createElement('button')
+    } else {
+      btn = createElement('a')
+      btn.href = href
+    }
     btn.textContent = text
     btn.type = type
     btn.classList.add(...classList)

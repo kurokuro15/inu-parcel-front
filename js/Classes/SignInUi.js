@@ -143,7 +143,8 @@ export default class SignInUi extends Ui {
       classList: ['btn', 'btn-primary'],
       size: '4',
       text: 'Atrás',
-      type: 'reset'
+      type: 'reset',
+      href: 'javascript:app.toLogin();'
     })
     btnDiv.appendChild(backBtn)
     const signinBtn = this._createBtn({
