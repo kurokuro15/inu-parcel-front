@@ -3,6 +3,7 @@ import ParcelUi from './ParcelUi.js'
 import SignInUi from './SignInUi.js'
 import NavbarUi from './NavbarUi.js'
 import LoginUi from './LoginUi.js'
+import ForgetUi from './ForgetUi.js'
 import { localStorage, selecter } from '../GlobalSelectors.js'
 export class App {
   constructor () {
@@ -11,7 +12,7 @@ export class App {
     this.parcelUi = new ParcelUi()
     this.signInUi = new SignInUi()
     this.loginUi = new LoginUi()
-
+    this.forgetUi = new ForgetUi()
     // Iniciamos la app
     this.logon()
     console.log('iniciando app...')
@@ -29,6 +30,10 @@ export class App {
 
   toLogin () {
     this.loginUi.main()
+  }
+
+  toforgetPass () {
+    this.forgetUi.main()
   }
 
   logon () {
