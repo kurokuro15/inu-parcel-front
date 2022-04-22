@@ -175,14 +175,14 @@ export default class Validator {
     const aOneRef = Validator._returnTheReference(answerOne)
     if (Validator._havMaxLength(answerOne, maxAnswerLength)) {
       this.ui.printAlert('error', `Máximo ${maxAnswerLength} carácteres en el campo ${aOneRef}`)
-      this.ui.alertInput('error', e.querySelector('#reference'))
+      this.ui.alertInput('error', e.querySelector('#answerOne'))
       return false
     }
 
     const aTwoRef = Validator._returnTheReference(answerTwo)
     if (Validator._havMaxLength(answerTwo, maxAnswerLength)) {
       this.ui.printAlert('error', `Máximo ${maxAnswerLength} carácteres en el campo ${aTwoRef}`)
-      this.ui.alertInput('error', e.querySelector('#reference'))
+      this.ui.alertInput('error', e.querySelector('#answerTwo'))
       return false
     }
 
@@ -219,7 +219,6 @@ export default class Validator {
    */
   static _havMaxLength (string, maxLength) {
     if (string.length > maxLength) {
-      console.log(string)
       return true
     }
 
