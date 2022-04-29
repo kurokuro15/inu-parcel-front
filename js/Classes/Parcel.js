@@ -174,7 +174,7 @@ Dirección de recepción:${JSON.stringify(this.receivingAddress)}`
 
     return this._fetch({ method: 'POST', header, body }, response => {
       if (response.id) {
-        return response
+        callback(response)
       } else return false
     })
   }
