@@ -5,6 +5,7 @@ import NavbarUi from './NavbarUi.js'
 import LoginUi from './LoginUi.js'
 import ForgetUi from './ForgetUi.js'
 import { localStorage, selecter } from '../GlobalSelectors.js'
+import TrackingUi from './TrackingUI.js'
 export class App {
   constructor () {
     this.ui = new Ui()
@@ -13,9 +14,9 @@ export class App {
     this.signInUi = new SignInUi()
     this.loginUi = new LoginUi()
     this.forgetUi = new ForgetUi()
+    this.trackingUi = new TrackingUi()
     // Iniciamos la app
     this.logon()
-    console.log('iniciando app...')
   }
 
   toParcel () {
@@ -36,9 +37,12 @@ export class App {
     this.forgetUi.main()
   }
 
+  toTracking () {
+    this.trackingUi.main()
+  }
+
   logon () {
     const token = localStorage.getItem('token')
-    console.log(token)
     if (token) {
       this.toParcel()
     } else {
