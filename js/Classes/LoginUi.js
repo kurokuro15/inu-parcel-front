@@ -32,7 +32,7 @@ export default class LoginUi extends Ui {
     <div class="row justify-content-center">
       <div class="d-flex col-lg-5 col-md-5 col-sm-7 flex-column justify-content-center m-1">
         <a class="align-self-start pb-1" href="javascript:app.tosignIn()">Registrarme</a>
-        <a class="align-self-start" href="javascript:app.toforgetPass()">Olvidé la contraseña</a>
+        <a class="align-self-start" href="javascript:app.toforgotPass()">Olvidé la contraseña</a>
       </div>
       <div class="d-flex col-md-3 col-sm-3 justify-content-end m-1">
       <button class="btn btn-primary text-center" type="submit"><span class="material-icons-outlined">arrow_circle_right</span></button>

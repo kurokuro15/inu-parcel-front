@@ -1,6 +1,10 @@
 import { formToJSON, selecter } from '../GlobalSelectors.js'
 import Ui from './Ui.js'
 export default class Validator {
+  /**
+   * Clase para Validar, principalmente valida el registro de un usuario.
+   * De forma instanciada permite validar el login y la recuperación de contraseña
+   */
   constructor () {
     Validator.ui = this.ui = new Ui()
   }

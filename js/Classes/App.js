@@ -3,7 +3,7 @@ import ParcelUi from './ParcelUi.js'
 import SignInUi from './SignInUi.js'
 import NavbarUi from './NavbarUi.js'
 import LoginUi from './LoginUi.js'
-import ForgetUi from './ForgetUi.js'
+import ForgotUi from './ForgotUi.js'
 import { localStorage, selecter } from '../GlobalSelectors.js'
 import TrackingUi from './TrackingUI.js'
 export class App {
@@ -13,7 +13,7 @@ export class App {
     this.parcelUi = new ParcelUi()
     this.signInUi = new SignInUi()
     this.loginUi = new LoginUi()
-    this.forgetUi = new ForgetUi()
+    this.forgotUi = new ForgotUi()
     this.trackingUi = new TrackingUi()
     // Iniciamos la app
     this.logon()
@@ -33,8 +33,8 @@ export class App {
     this.loginUi.main()
   }
 
-  toforgetPass () {
-    this.forgetUi.main()
+  toforgotPass () {
+    this.forgotUi.main()
   }
 
   toTracking () {

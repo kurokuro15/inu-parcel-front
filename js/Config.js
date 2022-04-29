@@ -1,6 +1,8 @@
 
 const Config = {
+  // esta path refiere al archivo JSON donde estará ubicados los estados, municipios y parroquias de venezuela.
   path: '/venezuela.json',
+  // esta apiUrl busca la url absoluta de la api.
   apiUrl: 'http://localhost/api-rest/',
   URL: 'https://apimocha.com/kurokuro15/states',
   assets: {

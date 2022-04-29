@@ -3,7 +3,7 @@ import Validator from './Validation.js'
 import Config from '../Config.js'
 import Ui from './Ui.js'
 
-export default class Forget {
+export default class Forgot {
   constructor (event) {
     // prevenimos el evento por defecto y leemos el formulario creando un Json del mismo
     this.updateStateForm(event)
@@ -16,19 +16,19 @@ export default class Forget {
    * Método inicial para comenzar el proceso de reset password
    * @param {this} step
    */
-  async forgetpass (handle, step) {
+  async forgotPass (handle, step) {
     // first step. Primero tomamos el usuario o correo y devolvemos las preguntas asociadas para que respondan
-    if (handle === 'forget-user') {
-      if (this._handleForgetUser()) {
-        const questions = await this._fetchForgetuser()
+    if (handle === 'forgot-user') {
+      if (this._handleForgotUser()) {
+        const questions = await this._fetchForgotuser()
         if (questions) {
           return step(questions)
         }
       }
     }
-    if (handle === 'forget-question') {
-      if (this._handleForgetQuestion()) {
-        const token = await this._fetchForgetQuestion()
+    if (handle === 'forgot-question') {
+      if (this._handleForgotQuestion()) {
+        const token = await this._fetchForgotQuestion()
         if (token) {
           this.token = token
           return step()
@@ -36,9 +36,9 @@ export default class Forget {
       }
     }
 
-    if (handle === 'forget-password') {
-      if (this._handleForgetPassword()) {
-        const affected = await this._fetchForgetPassword()
+    if (handle === 'forgot-password') {
+      if (this._handleForgotPassword()) {
+        const affected = await this._fetchForgotPassword()
         if (affected) {
           return step()
         }
@@ -50,7 +50,7 @@ export default class Forget {
    * Método para manejar el primer formulario
    * @returns {Boolean}
    */
-  _handleForgetUser () {
+  _handleForgotUser () {
     const { username } = this.data
 
     if (this._validateMail(username)) {
@@ -69,7 +69,7 @@ export default class Forget {
    * Método para manejar el segundo formulario
    * @returns {Bollean}
    */
-  _handleForgetQuestion () {
+  _handleForgotQuestion () {
     const { answerOne, answerTwo } = this.data
     if (this._validateAnswers({ answerOne, answerTwo })) {
       this.answerOne = answerOne
@@ -83,7 +83,7 @@ export default class Forget {
    * Método para manejar el tercer formulario
    * @returns {Boolean}
    */
-  _handleForgetPassword () {
+  _handleForgotPassword () {
     const { password, repeatPassword } = this.data
     if (this._validatePassword(password) || this._validatePassword(repeatPassword)) {
       if (password === repeatPassword) {
@@ -186,7 +186,7 @@ export default class Forget {
   }
 
   /**
-   * Método para actualizar la referencia de formulario conforme vamos avanzando por el forget password
+   * Método para actualizar la referencia de formulario conforme vamos avanzando por el forgot password
    * @param {Event} event
    */
   updateStateForm (event) {
@@ -199,7 +199,7 @@ export default class Forget {
    * Método para realizar la peticion de las preguntas de seguridad del usuario
    * @returns {boolean | object}
    */
-  async _fetchForgetuser () {
+  async _fetchForgotuser () {
     // Preparamos la primera petición, GET
     // Cabecera
     // eslint-disable-next-line no-undef
@@ -227,7 +227,7 @@ export default class Forget {
    * Método para realizar las respuestas de seguridad y devolver token del servidor
    * @returns {boolean | string}
    */
-  async _fetchForgetQuestion () {
+  async _fetchForgotQuestion () {
     // Preparamos la segunda petición, POST
     // Cabecera
     // eslint-disable-next-line no-undef
@@ -254,7 +254,7 @@ export default class Forget {
    * Método para realizar la petición de cambio de contraseña al servidor
    * @returns {boolean | number}
    */
-  async _fetchForgetPassword () {
+  async _fetchForgotPassword () {
     // Preparamos la primera petición, PUT
     // Cabecera
     // eslint-disable-next-line no-undef

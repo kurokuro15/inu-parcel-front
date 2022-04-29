@@ -65,7 +65,6 @@ export async function fetch (url = '', init = {}) {
   const response = await globalThis.fetch(url, init)
 
   if (response) {
-    // si el HTTP-status es 200-299
     // obtener cuerpo de la respuesta (método debajo)
     const json = await response.json()
     return json

@@ -1,15 +1,14 @@
 import Ui from './Ui.js'
-import Forget from './Forget.js'
+import Forgot from './Forgot.js'
 import { container, createElement, selecter } from '../GlobalSelectors.js'
 import app from '../main.js'
-// import Forget from './Forget.js'
-export default class ForgetUi extends Ui {
+export default class ForgotUi extends Ui {
   main () {
     this._header('Reestablecer la contraseña')
     this.mainElement = createElement('main')
     this.mainElement.classList.add('login')
     this.mainElement.innerHTML = `
-    <form class="forget-user d-flex container justify-content-center flex-column text-center">
+    <form class="forgot-user d-flex container justify-content-center flex-column text-center">
     <div class="row justify-content-center">
     <div class="d-flex col-md-5 col-sm-7 m-1 justify-content-center">
    <label class="text-center align-self-center form-label" for="username">Usuario o Correo electrónico</label>
@@ -28,16 +27,16 @@ export default class ForgetUi extends Ui {
     // Esto verifica que no exista ya un formulario.
     if (!selecter('main.login')) {
       container.appendChild(this.mainElement)
-      selecter('form.forget-user').addEventListener('submit', e => {
-        this.forget = new Forget(e)
-        this.forget.forgetpass('forget-user', (questions) => this.questions(questions))
+      selecter('form.forgot-user').addEventListener('submit', e => {
+        this.forgot = new Forgot(e)
+        this.forgot.forgotpass('forgot-user', (questions) => this.questions(questions))
       })
     }
   }
 
   questions ({ questionOne, questionTwo }) {
     this.mainElement.innerHTML = `
-    <form class="forget-question d-flex container justify-content-center flex-column text-center">
+    <form class="forgot-question d-flex container justify-content-center flex-column text-center">
       <div class="row justify-content-center">
         <div class="d-flex col-md-5 col-sm-7 m-1 justify-content-center">
           <label class="text-center align-self-center form-label" for="answerOne">${questionOne}</label>
@@ -61,17 +60,17 @@ export default class ForgetUi extends Ui {
       </div>
     </form>`
 
-    if (!selecter('form.forget-password')) {
-      selecter('form.forget-question').addEventListener('submit', e => {
-        this.forget.updateStateForm(e)
-        this.forget.forgetpass('forget-question', () => this.reset())
+    if (!selecter('form.forgot-password')) {
+      selecter('form.forgot-question').addEventListener('submit', e => {
+        this.forgot.updateStateForm(e)
+        this.forgot.forgotpass('forgot-question', () => this.reset())
       })
     }
   }
 
   reset () {
     this.mainElement.innerHTML = `
-    <form class="forget-password d-flex container justify-content-center flex-column text-center">
+    <form class="forgot-password d-flex container justify-content-center flex-column text-center">
       <div class="row justify-content-center">
         <div class="d-flex col-md-5 col-sm-7 m-1 justify-content-center">
           <label class="text-center align-self-center form-label" for="password">Nueva contraseña</label>
@@ -94,10 +93,10 @@ export default class ForgetUi extends Ui {
         </div>
       </div>
     </form>`
-    if (selecter('form.forget-password')) {
-      selecter('form.forget-password').addEventListener('submit', e => {
-        this.forget.updateStateForm(e)
-        this.forget.forgetpass('forget-password', () => {
+    if (selecter('form.forgot-password')) {
+      selecter('form.forgot-password').addEventListener('submit', e => {
+        this.forgot.updateStateForm(e)
+        this.forgot.forgotpass('forgot-password', () => {
           this.printAlert('success', 'Cambio de contraseña realizado con éxito')
           setTimeout(() => {
             app.logon()
