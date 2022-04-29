@@ -27,3 +27,17 @@ main.login button {
 	line-height: 1;
 }
 
+input.d-inline {
+	width: auto;
+	height: auto;
+}
+
+button>span.material-icons-outlined {
+	font-size: 1.2em;
+	text-align: center;
+}
+
+th {
+	vertical-align: middle;
+	text-transform: uppercase;
+}
