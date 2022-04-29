@@ -25,7 +25,6 @@ export class App {
   }
 
   tosignIn () {
-    this.navbar.main()
     this.signInUi.main()
   }
 
