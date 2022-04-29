@@ -222,10 +222,10 @@ export default class ParcelUi extends Ui {
     const parcel = new Parcel(dataObjParcel)
 
     // llamamos al método que nos devuelve los cálculos :D
-    const presupuesto = parcel.getParcel()
+    const detail = parcel.getParcel()
 
     const { raw, tax, amount, origin, destiny, distance, time, distanceUnit, timeUnit } =
-      presupuesto
+      detail
 
     const article = createElement('article')
     article.classList.add('row', 'justify-content-center')
@@ -273,7 +273,12 @@ export default class ParcelUi extends Ui {
    `
 
     this.mainElement.appendChild(article)
-
+    // una vez impreso todo se hace el post. No funciona no sé por qué...
+    parcel.postParcel((response) => {
+      if (response) {
+        this.printAlert('success', response.msg)
+      }
+    })
     selecter('button.btn').addEventListener('click', () => {
       resetDataObj()
       this.whatSend()

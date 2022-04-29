@@ -1,17 +1,31 @@
 import Config from '../Config.js'
+import { fetch, localStorage } from '../GlobalSelectors.js'
 export default class Parcel {
-  constructor ({ value, length, width, high, weight, type, senderAddress, receivingAddress }) {
+  constructor ({
+    value,
+    length,
+    width,
+    high,
+    weight,
+    type,
+    senderAddress,
+    receivingAddress
+  }) {
     this.value = value
     this.dimensions = { length, width, high }
     this.weight = weight
     this.type = type
     this.config = Config
+
     // Tengo acá un problema. Debo parsear el ID de las direcciones.. Creo que Con Number se resuelve :V.
-    ;[this.senderAddress] = this.config.addresses.filter(ad => ad.id === Number(senderAddress))
+    ;[this.senderAddress] = this.config.addresses.filter(
+      ad => ad.id === Number(senderAddress)
+    )
     ;[this.receivingAddress] = this.config.addresses.filter(
       ad => ad.id === Number(receivingAddress)
     )
     this.distance = 0
+    this.token = localStorage.getItem('token')
   }
 
   // Acá calcularemos el intervalo o distancia entre la dirección de envío y de recepción
@@ -54,13 +68,14 @@ export default class Parcel {
     const { length, width, high } = this.dimensions
     // esta constante es un millón, debido a la división individual de centímetros/100 para cada unidad. 100 * 100 * 100 = un millón
     const TO_METERS = 1000000
-    const volumen = length * width * high / TO_METERS
+    const volumen = (length * width * high) / TO_METERS
     const volumetricWeight = volumen * this.config.transportFees.conversionFactor
 
-    const weightUnit = this.weight === 1 && volumetricWeight === 1 ? singular[1] : plural[1]
+    const weightUnit =
+      this.weight === 1 && volumetricWeight === 1 ? singular[1] : plural[1]
 
     return {
-      volumen,
+      volumen: volumen,
       weight: volumetricWeight > this.weight ? volumetricWeight : this.weight,
       weightUnit
     }
@@ -88,8 +103,8 @@ export default class Parcel {
   // Calcularemos los impuestos
   calTax (net) {
     const subtotal = net + this.config.transportFees.manipulationCost
-    const tax = subtotal * this.config.transportFees.taxtConst / 100
-    const total = (tax + subtotal)
+    const tax = (subtotal * this.config.transportFees.taxtConst) / 100
+    const total = tax + subtotal
     return { tax, raw: subtotal, amount: total }
   }
 
@@ -109,7 +124,7 @@ Dirección de recepción:${JSON.stringify(this.receivingAddress)}`
     const { time, timeUnit } = this.calTime()
     const { volumen, weight, weightUnit } = this.calGage()
     const rate = this.calRate()
-    return {
+    this.parcel = {
       amount,
       destiny: receivingName,
       distance,
@@ -123,6 +138,73 @@ Dirección de recepción:${JSON.stringify(this.receivingAddress)}`
       volumen,
       weight,
       weightUnit
+    }
+    return this.parcel
+  }
+
+  postParcel (callback) {
+    const { weight, amount, volumen } = this.parcel
+    const { x: senderX, y: senderY } = this.senderAddress
+    const { x: receivingX, y: receivingY } = this.receivingAddress
+    const destination = {
+      longitude: receivingX,
+      latitude: receivingY
+    }
+    const origin = {
+      longitude: senderX,
+      latitude: senderY
+    }
+
+    // eslint-disable-next-line no-undef
+    const header = new Headers({
+      'Content-Type': 'application/json',
+      token: this.token
+    })
+
+    const body = {
+      type: this.type,
+      destination,
+      origin,
+      volumen,
+      weight,
+      value: this.value,
+      amount,
+      user: 'kurokuro15'
+    }
+
+    return this._fetch({ method: 'POST', header, body }, response => {
+      if (response.id) {
+        return response
+      } else return false
+    })
+  }
+
+  async _fetch ({ method, header, body = null }, callback) {
+    // preparamos la uri
+    const url = Config.apiUrl + 'parcel'
+
+    // Contenido de la petición
+    const init = {
+      method: method,
+      headers: header,
+      mode: 'cors',
+      cache: 'default',
+      body: body ? JSON.stringify(body) : null
+    }
+
+    // Petición o Request
+    // no está saliendo del aire, o sí? como podría hacer que 'no salga del aire' ? XD
+    // eslint-disable-next-line no-undef
+    const request = new Request(url, init)
+    // hacemos el fecth
+    const response = await fetch(request)
+    if (response.error_id) {
+      // enviar un printAlert para indicar el error con el mensaje
+      const msg = response.error_msg
+      this.ui.printAlert('error', msg)
+      return false
+    } else {
+      return callback(response)
     }
   }
 }
