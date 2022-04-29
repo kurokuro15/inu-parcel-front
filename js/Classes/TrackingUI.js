@@ -4,13 +4,16 @@ import Tracking from './Tracking.js'
 
 export default class TrackingUi extends Ui {
   /**
-   * Crea el Div.main
+   * Clase de la interface Tracking. Genera todo lo requerido
    */
   constructor () {
     super()
     this.tracking = new Tracking()
   }
 
+  /**
+   * Crea el Div.main
+   */
   main () {
     this._header('Encomiendas')
     this.mainElement = createElement('main')
@@ -23,6 +26,9 @@ export default class TrackingUi extends Ui {
     }
   }
 
+  /**
+ * Genera la tabla para mostrar la información y posteriormente llama a getAllTracking y deja buscar por Tracking
+ */
   trackingTable () {
     const table = `
     <div class="table-responsive">
@@ -83,6 +89,10 @@ export default class TrackingUi extends Ui {
     })
   }
 
+  /**
+   * Método para mapear los datos de un "ParcelObject" e imprimirlos en la tabla ordenada.
+   * @param {object} params { tracking, name, origin, destination, status, amount }
+   */
   setData ({ tracking, name, origin, destination, status, amount }) {
     if (typeof origin === 'string') origin = JSON.parse(origin)
     if (typeof destination === 'string') destination = JSON.parse(destination)

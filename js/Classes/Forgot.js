@@ -13,8 +13,9 @@ export default class Forgot {
   }
 
   /**
-   * Método inicial para comenzar el proceso de reset password
+   * Método que da inicio y seguimiento al proceso de cambio de contraseña
    * @param {this} step
+   *
    */
   async forgotPass (handle, step) {
     // first step. Primero tomamos el usuario o correo y devolvemos las preguntas asociadas para que respondan
@@ -47,7 +48,8 @@ export default class Forgot {
   }
 
   /**
-   * Método para manejar el primer formulario
+   * Método para manejar el primer formulario.
+   * Toma un usuario o correo electrónico y devuelve un error o sus preguntas de seguridad.
    * @returns {Boolean}
    */
   _handleForgotUser () {
@@ -66,7 +68,8 @@ export default class Forgot {
   }
 
   /**
-   * Método para manejar el segundo formulario
+   * Método para manejar el segundo formulario.
+   * Toma las respuestas de las preguntas de seguridad y devuelve un error o aprobación y token de seguridad
    * @returns {Bollean}
    */
   _handleForgotQuestion () {
@@ -80,7 +83,8 @@ export default class Forgot {
   }
 
   /**
-   * Método para manejar el tercer formulario
+   * Método para manejar el tercer formulario.
+   * Toma el token de seguridad y la nueva contraseña para realizar la petición de insert devuelve error o mensaje de éxito
    * @returns {Boolean}
    */
   _handleForgotPassword () {
@@ -98,7 +102,7 @@ export default class Forgot {
 
   /**
    * Método para validar el correo electrónico en cuestión
-   * @param {string} email
+   * @param {string} email correo a validar
    * @returns {Boolean}
    */
   _validateMail (email) {
@@ -113,9 +117,9 @@ export default class Forgot {
 
   /**
    * Método para validar el usuario en cuestión
-   * @param {string} username
-   * @param {Event} e
-   * @param {FormData} data
+   * @param {string} username usuario a validar
+   * @param {HTMLElement} e elemento html a aplicarle las clases de validación visual
+   * @param {FormData} data objeto de datos del formulario para tomar la referencia de allí
    * @returns {Boolean}
    */
   _validateUser (username, e, data) {
@@ -135,8 +139,8 @@ export default class Forgot {
   }
 
   /**
-   * Método para validar las respuestas
-   * @param {object} answers
+   * Método para validar las respuestas de seguridad
+   * @param {object} answers objeto del tipo { answerOne, answerTwo }
    * @returns {Boolean}
    */
   _validateAnswers ({ answerOne, answerTwo }) {
@@ -168,7 +172,7 @@ export default class Forgot {
 
   /**
    * Método para validar la contraseña
-   * @param {string} password
+   * @param {string} password contraseña a validar
    * @returns {Boolean}
    */
   _validatePassword (password) {

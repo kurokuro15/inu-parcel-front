@@ -12,6 +12,9 @@ export default class NavbarUi extends Ui {
     }
   }
 
+  /**
+ * Método de creación de la navbar. Genera todo lo necesario para una barra de navegación post inicio de sesión.
+ */
   navbar () {
     this.logo = config.assets.logo
     // Creamos el logo
@@ -42,9 +45,5 @@ export default class NavbarUi extends Ui {
     nav.appendChild(div)
     // hacemos nav hijo del contenedor estático y listo :D
     containerNavbar.appendChild(nav)
-  }
-
-  _activeItem (item) {
-    item.classList.add('active')
   }
 }

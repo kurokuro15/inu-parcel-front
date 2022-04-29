@@ -11,37 +11,46 @@ export default class SignIn {
     this.ui = new Ui()
   }
 
+  /**
+   * Método de progresión del registro, valida el formulario, realiza la petición
+   * y posteriormente retorna a iniciar sesión si todo está OK.
+   * Caso contrario irá mostrando errores informativos.
+   */
   signin () {
-    if (this._validateForm()) {
+    // Validamos el formulario
+    if (Validator.validateSignin(this.form)) {
+      // hacemos el fetch pasando como parámetro el JSON del Formulario
       this._fetchSign(formToJSON(this.form))
         .then(result => {
+          // si hay respuesta nos vamos a iniciar sesión
           if (result) {
             app.logon()
           }
         })
         .catch(err => {
+          // si algún error ocurre mostramos el error en pantalla y consola
+          this.ui.printAlert('error', err)
           console.log(err)
         })
     }
-    // hacemos el fetch
-    // Si el fetch va todo nice, entonces lo redirigimos a iniciar sesión
-    // con un lindo mensaje verde de 'cuenta creada'
-    // app.toLogin()
   }
 
-  _validateForm () {
-    // si solo hago esto acá, porque luego la refactorizaré seguramente xD
-    return Validator.validateSignin(this.form)
-  }
-
+  /**
+   * Método asíncrono para la creación del usuario. Toma los datos del formulario validado y devuelve una respuesta con el id del usuario creado.
+   * @param {object} dataForm
+   * @returns {boolean}
+   */
   async _fetchSign (dataForm) {
     const url = Config.apiUrl + 'user'
+
     // Preparamos  la petición POST
+
     // Cabecera
     // eslint-disable-next-line no-undef
     const header = new Headers({
       'Content-Type': 'application/json'
     })
+
     const {
       name,
       lastname: lsname,
@@ -65,6 +74,7 @@ export default class SignIn {
       phone,
       email
     } = dataForm
+
     // Picamos el nombre y el apellido en dos si es posible xD
     const [firstname, secondname] = this._splitString(name)
     const [lastname, secondlastname] = this._splitString(lsname)
@@ -95,10 +105,8 @@ export default class SignIn {
       phone,
       email
     }
-    console.log(body)
 
     // Contenido de la petición
-
     const init = {
       method: 'POST',
       headers: header,

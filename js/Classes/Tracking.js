@@ -5,8 +5,14 @@ export default class Tracking {
     this.token = localStorage.getItem('token')
   }
 
-  // devuelvo todos los trackings
+  /**
+   * Obtiene la información de todos los envíos realizados en la plataforma...
+   * @param {function} callback
+   * @returns {Promise | function} response
+   */
   getAllTracking (callback) {
+    // capturamos una vez más el token por si no está capturado al iniciar la clase...
+    this.token = localStorage.getItem('token')
     // eslint-disable-next-line no-undef
     const header = new Headers({
       'Content-Type': 'application/json',
@@ -16,6 +22,12 @@ export default class Tracking {
     return this._fetch({ method: 'GET', header }, '', callback)
   }
 
+  /**
+   *  Obtiene la información de un envío al pasarle el número de tracking
+   * @param {string} tracking
+   * @param {function} callback
+   * @returns {callback}
+   */
   getTracking (tracking = '', callback) {
     if (!tracking) {
       return this.getAllTracking(callback)

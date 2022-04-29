@@ -1,6 +1,9 @@
 import Config from '../Config.js'
 import { container, createElement, selecter } from '../GlobalSelectors.js'
 export default class Ui {
+  /**
+   * Clase base de interfaces, contiene diversos métodos para crear componentes gráficos
+   */
   constructor () {
     this.config = Config
   }

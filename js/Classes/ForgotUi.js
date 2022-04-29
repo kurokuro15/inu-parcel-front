@@ -3,6 +3,9 @@ import Forgot from './Forgot.js'
 import { container, createElement, selecter } from '../GlobalSelectors.js'
 import app from '../main.js'
 export default class ForgotUi extends Ui {
+  /**
+   * Muestra la interface para ingresar el usuario o correo, este traerá una respuesta de usuario inexistente en caso de no existir o las preguntas de seguridad para validarlo.
+   */
   main () {
     this._header('Reestablecer la contraseña')
     this.mainElement = createElement('main')
@@ -29,11 +32,14 @@ export default class ForgotUi extends Ui {
       container.appendChild(this.mainElement)
       selecter('form.forgot-user').addEventListener('submit', e => {
         this.forgot = new Forgot(e)
-        this.forgot.forgotpass('forgot-user', (questions) => this.questions(questions))
+        this.forgot.forgotPass('forgot-user', questions => this.questions(questions))
       })
     }
   }
 
+  /**
+   * Muestra la interface para responder las preguntas de seguridad, validandolas y dando acceso a la interface de cambio de contraseña.
+   */
   questions ({ questionOne, questionTwo }) {
     this.mainElement.innerHTML = `
     <form class="forgot-question d-flex container justify-content-center flex-column text-center">
@@ -63,11 +69,14 @@ export default class ForgotUi extends Ui {
     if (!selecter('form.forgot-password')) {
       selecter('form.forgot-question').addEventListener('submit', e => {
         this.forgot.updateStateForm(e)
-        this.forgot.forgotpass('forgot-question', () => this.reset())
+        this.forgot.forgotPass('forgot-question', () => this.reset())
       })
     }
   }
 
+  /**
+   * Muestra la interface para registrar una nueva contraseña, validando que siga un patrón complejo y sea repetida dos veces.
+   */
   reset () {
     this.mainElement.innerHTML = `
     <form class="forgot-password d-flex container justify-content-center flex-column text-center">
@@ -96,7 +105,7 @@ export default class ForgotUi extends Ui {
     if (selecter('form.forgot-password')) {
       selecter('form.forgot-password').addEventListener('submit', e => {
         this.forgot.updateStateForm(e)
-        this.forgot.forgotpass('forgot-password', () => {
+        this.forgot.forgotPass('forgot-password', () => {
           this.printAlert('success', 'Cambio de contraseña realizado con éxito')
           setTimeout(() => {
             app.logon()

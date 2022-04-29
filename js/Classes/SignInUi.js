@@ -90,6 +90,7 @@ export default class SignInUi extends Ui {
     const contactComponent = [contactLabel, emailCol, phoneCol]
 
     // Sección Dirección
+    // En esta sección está pendiente llevar los datos a la db
     const addressLabel = this._createCol(12, 'mt-3')
     addressLabel.appendChild(this._createFormLabel('Dirección'))
 

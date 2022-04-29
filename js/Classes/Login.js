@@ -11,6 +11,9 @@ export default class Login {
     this.ui = new Ui()
   }
 
+  /**
+ *  Método que se ejecuta al momento de iniciar sesión, valida el usuario, contraseña y espera la respuesta de un token válido
+ */
   login () {
     if (this._validateForm()) {
       this._fetchAuth(this.data).then(res => {
@@ -21,6 +24,10 @@ export default class Login {
     }
   }
 
+  /**
+   * Valida los campos del formulario, usuario y contraseña.
+   * @returns {boolean}
+   */
   _validateForm () {
     const validator = new Validator()
     this.data = formToJSON(this.form)
@@ -35,6 +42,11 @@ export default class Login {
     return true
   }
 
+  /**
+   * Método asincrono que espera la respuesta del servidor buscando autenticar al usuario indicado en {dataForm}
+   * @param {Object} dataForm objeto del tipo { "username": "user", "password":"password" }
+   * @returns {boolean}
+   */
   async _fetchAuth (dataForm) {
     // preparamos la uri
     const url = Config.apiUrl + 'auth'

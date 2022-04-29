@@ -28,7 +28,10 @@ export default class Parcel {
     this.token = localStorage.getItem('token')
   }
 
-  // Acá calcularemos el intervalo o distancia entre la dirección de envío y de recepción
+  /**
+ * Calcularemos el intervalo o distancia entre la dirección de envío y de recepción
+ * @return {object}
+ */
   calInterval () {
     const { length: L } = this.config.units
     const TO_KILOMETERS = 1000
@@ -54,7 +57,10 @@ export default class Parcel {
     return { senderName, receivingName, distance, distanceUnit }
   }
 
-  // Calcularemos la tarifa por kilómetro que tendrá el paquete.
+  /**
+   * Calcularemos la tarifa por kilómetro que tendrá el paquete.
+   * @returns {object}
+   */
   calRate () {
     const { minRate, costPkilo } = this.config.transportFees
     const { weight } = this.calGage()
@@ -62,7 +68,11 @@ export default class Parcel {
     return rate > minRate ? rate : minRate
   }
 
-  // Calcularemos que es más relevante, sí el peso o las dimensiones.
+  /**
+  * Calcularemos que es más relevante, sí el peso o las dimensiones.
+  *
+ * @returns {object}
+ */
   calGage () {
     const { singular, plural } = this.config.units.weight
     const { length, width, high } = this.dimensions
@@ -81,7 +91,10 @@ export default class Parcel {
     }
   }
 
-  // Calcularemos el tiempo que tardará en llegar el paquete del origen al destino
+  /**
+   *Calculamos el tiempo que tardará en llegar el paquete del origen al destino
+   * @returns {object}
+   */
   calTime () {
     // Tengo un buggisto acá que arreglar :'u
     const { time: T } = this.config.units
@@ -100,7 +113,11 @@ export default class Parcel {
     return { time, timeUnit }
   }
 
-  // Calcularemos los impuestos
+  /**
+   * Calculamos los impuestos
+   * @param {number} net monto neto del envío.
+   * @returns {object}
+   */
   calTax (net) {
     const subtotal = net + this.config.transportFees.manipulationCost
     const tax = (subtotal * this.config.transportFees.taxtConst) / 100
@@ -108,7 +125,10 @@ export default class Parcel {
     return { tax, raw: subtotal, amount: total }
   }
 
-  // Devolveremos la cotización 'cruda'
+  /**
+   * Método de depuración, devuelve la cotización 'cruda'
+   * @returns {string}
+   */
   showParcel () {
     return `Encomienda de tipo: ${this.type}
 Dimensiones: ${JSON.stringify(this.dimensions)}
@@ -117,7 +137,10 @@ Dirección de Emisión:${JSON.stringify(this.senderAddress)}
 Dirección de recepción:${JSON.stringify(this.receivingAddress)}`
   }
 
-  // Devoleremos los montos y la información para 'imprimir' de la cotización
+  /**
+   * Devoleremos los montos y la información para 'imprimir' de la cotización
+   * @returns {object}
+   */
   getParcel () {
     const { raw, tax, amount } = this.calTax(this.calRate())
     const { senderName, receivingName, distance, distanceUnit } = this.calInterval()
@@ -142,6 +165,11 @@ Dirección de recepción:${JSON.stringify(this.receivingAddress)}`
     return this.parcel
   }
 
+  /**
+ * Metodo de inserción de encomienda en la REST API
+ * @param {function} callback
+ * @returns {boolean}
+ */
   postParcel (callback) {
     const { weight, amount, volumen } = this.parcel
     const { x: senderX, y: senderY } = this.senderAddress
@@ -179,6 +207,12 @@ Dirección de recepción:${JSON.stringify(this.receivingAddress)}`
     })
   }
 
+  /**
+   * Método genérico de fecthing
+   * @param {object} params
+   * @param {Function} callback
+   * @returns {boolean | callback}
+   */
   async _fetch ({ method, header, body = null }, callback) {
     // preparamos la uri
     const url = Config.apiUrl + 'parcel'

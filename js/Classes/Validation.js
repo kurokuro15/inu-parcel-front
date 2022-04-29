@@ -10,7 +10,7 @@ export default class Validator {
   }
 
   /**
-   * Validación del cuerpo del formulario de registro
+   * Estático -  Validación del cuerpo del formulario de registro
    * @param {Event} e evento Submit
    * @param {function} callback Llamada de vuelta a una función que se ejecutará si la validación resulta.
    */
@@ -204,7 +204,7 @@ export default class Validator {
   }
 
   /**
-   * Verifica si hay espacios en el string que se le pasa como parámetro
+   * Estático - Verifica si hay espacios en el string que se le pasa como parámetro
    * @param {string} string
    * @returns {boolean}
    */
@@ -216,7 +216,7 @@ export default class Validator {
   }
 
   /**
-   * Retorna True si el string tiene el tamaño recibido como parámetro o superior.
+   * Estático -  Retorna True si el string tiene el tamaño recibido como parámetro o superior.
    * @param {string} string
    * @param {number} maxLength
    * @returns {boolean}
@@ -230,7 +230,7 @@ export default class Validator {
   }
 
   /**
-   * Verifica si hay símbolos en el string que se le pasa como parámetro
+   * Estático - Verifica si hay símbolos en el string que se le pasa como parámetro
    * @param {string} string
    * @returns {boolean}
    */
@@ -240,7 +240,7 @@ export default class Validator {
   }
 
   /**
-   * Valida que el campo tenga un máximo de {maxLength} caracteres y no tenga simbolos no admitidos
+   * Estático - Valida que el campo tenga un máximo de {maxLength} caracteres y no tenga simbolos no admitidos
    * @param {string} reference
    * @param {number} maxLength
    * @returns
@@ -259,7 +259,7 @@ export default class Validator {
   }
 
   /**
-   * Retorna el nombre de la propiedad que se esté pasando
+   * Estático - Retorna el nombre de la propiedad que se esté pasando
    * @param {string} prop
    * @returns {string}
    */
@@ -271,6 +271,13 @@ export default class Validator {
     return name
   }
 
+  /**
+ * Valida si el string pasado como username es un nombre de usuario válido caso contrario devuelve un error visual
+ * @param {string} username string a validar
+ * @param {HTMLElement} e elemento html a ser visualmente tratado
+ * @param {DataForm} data objeto con la propiedad del username
+ * @returns {boolean}
+ */
   validateUser (username, e, data) {
     const maxUsernameLength = 12
     // Validamos Username
@@ -287,6 +294,12 @@ export default class Validator {
     }
   }
 
+  /**
+  * Valida si el string pasado como password es una contraseña válida caso contrario devuelve un error visual
+  * @param {string} password string de contraseña con patrón complejo
+  * @param {HTMLElement} e elemento html a ser tratado visualmente
+  * @returns {boolean}
+  */
   validatePassword (password, e) {
     // Validamos que la contraseña tenga más de 8 carácteres, minúsculas, mayúsculas y símbolos.
     const passRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/

@@ -273,12 +273,14 @@ export default class ParcelUi extends Ui {
    `
 
     this.mainElement.appendChild(article)
-    // una vez impreso todo se hace el post. No funciona no sé por qué...
+    // una vez impreso todo se hace el post.
     parcel.postParcel((response) => {
       if (response) {
+        // si nos responde la api, imprimimos un mensaje de éxito
         this.printAlert('success', response.msg)
       }
     })
+    // sí le damos al botón de 'reset' de vuelta a empezar, podemos hacer cuantas peticiones queramos.
     selecter('button.btn').addEventListener('click', () => {
       resetDataObj()
       this.whatSend()
