@@ -126,6 +126,9 @@ export default class TrackingUi extends Ui {
       </td>
     `
     const tfoot = selecter('tfoot')
+    tfoot.addEventListener('click', e => {
+      e.preventDefault();
+    })
     tfoot.appendChild(tr)
   }
 }
