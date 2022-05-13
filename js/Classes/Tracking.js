@@ -39,6 +39,7 @@ export default class Tracking {
     })
     return this._fetch({ method: 'GET', header }, { tracking }, response => {
       if (response) {
+        console.log(response)
         return callback(response)
       } else return false
     })

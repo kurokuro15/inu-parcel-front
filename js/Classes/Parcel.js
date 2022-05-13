@@ -197,6 +197,7 @@ Dirección de recepción:${JSON.stringify(this.receivingAddress)}`
       weight,
       value: this.value,
       amount,
+      // Reynaldo del futuro, resuelve esto.
       user: 'kurokuro15'
     }
 
