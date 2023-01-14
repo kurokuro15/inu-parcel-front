@@ -32,7 +32,7 @@ export default class ForgotUi extends Ui {
       container.appendChild(this.mainElement)
       selecter('form.forgot-user').addEventListener('submit', e => {
         this.forgot = new Forgot(e)
-        this.forgot.forgotPass('forgot-user', questions => this.questions(questions))
+        this.forgot.forgotPass('forgot-user', this.questions)
       })
     }
   }
