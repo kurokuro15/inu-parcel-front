@@ -61,6 +61,8 @@ export default class TrackingUi extends Ui {
         </thead>
         <tbody>
         </tbody>
+        <tfoot>
+        </tfoot>
       </table>
     </div>
     `
@@ -68,9 +70,11 @@ export default class TrackingUi extends Ui {
     this.mainElement.innerHTML = table
     // hacemos la petición get y rellenamos la tablita
     this.tracking.getAllTracking(res => {
-      res.forEach(parcel => {
+      console.log(res)
+      res.parcel.forEach(parcel => {
         this.setData(parcel)
       })
+      this.pagination(res.meta)
     })
 
     // añadimos funcionalidad al search
@@ -80,10 +84,12 @@ export default class TrackingUi extends Ui {
       console.log(form)
       this.tracking.getTracking(form.search, res => {
         this._clearHtml(selecter('tbody'))
-        if (res.length > 1) {
+        console.log(res)
+        if (res.length > 1 && Array.isArray(res)) {
           res.forEach(parcel => {
             this.setData(parcel)
           })
+          this.pagination(res.meta)
         } else { this.setData(res) }
       })
     })
@@ -109,5 +115,20 @@ export default class TrackingUi extends Ui {
 
     const tbody = selecter('tbody')
     tbody.appendChild(tr)
+  }
+
+  pagination ({ previous, next }) {
+    const tr = createElement('tr')
+    tr.innerHTML = `
+      <td colspan='8'>
+        ${previous ? `<a class="btn" href='${previous}'><span class="material-icons-outlined">arrow_back_ios</span></a>` : ''}
+        ${next ? `<a class="btn" href='${next}'><span class="material-icons-outlined">arrow_forward_ios</span></a>` : ''}
+      </td>
+    `
+    const tfoot = selecter('tfoot')
+    tfoot.addEventListener('click', e => {
+      e.preventDefault();
+    })
+    tfoot.appendChild(tr)
   }
 }

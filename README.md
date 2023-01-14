@@ -1,4 +1,4 @@
-# inu-presupuestos-envios
+# inu-parcel-front
 
 ### Proyecto de la materia INU-554 INTERFACES WEB CON EL USUARIO. 
 #### Creado en Vanila Javascript más CSS y HTML. 

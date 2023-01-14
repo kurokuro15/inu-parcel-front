@@ -10,7 +10,7 @@ export default class Tracking {
    * @param {function} callback
    * @returns {Promise | function} response
    */
-  getAllTracking (callback) {
+  getAllTracking (uri, callback) {
     // capturamos una vez más el token por si no está capturado al iniciar la clase...
     this.token = localStorage.getItem('token')
     // eslint-disable-next-line no-undef
@@ -19,7 +19,7 @@ export default class Tracking {
       token: this.token
     })
 
-    return this._fetch({ method: 'GET', header }, '', callback)
+    return this._fetch({ uri, method: 'GET', header }, '', callback)
   }
 
   /**
@@ -39,6 +39,7 @@ export default class Tracking {
     })
     return this._fetch({ method: 'GET', header }, { tracking }, response => {
       if (response) {
+        console.log(response)
         return callback(response)
       } else return false
     })
@@ -51,9 +52,9 @@ export default class Tracking {
    * @param {function} callback
    * @returns
    */
-  async _fetch ({ method, header, body = null }, params = null, callback) {
+  async _fetch ({ uri, method, header, body = null }, params = null, callback) {
     // preparamos la uri
-    const url = new URL(Config.apiUrl + 'parcel')
+    url = new URL( uri || (Config.apiUrl + 'parcel'))
     if (params) {
       url.search = new URLSearchParams(params).toString()
     }
@@ -81,4 +82,5 @@ export default class Tracking {
       return callback(response)
     }
   }
+
 }
